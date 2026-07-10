@@ -1,0 +1,266 @@
+backend:
+  name: github
+  repo: CHILALA-97/chilala-site
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "site_data"
+    label: "网站内容"
+    files:
+      - name: "navigation"
+        label: "导航 Tab 管理"
+        file: "data/navigation.json"
+        format: "json"
+        fields:
+          - label: "导航项"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "显示名称", name: "label", widget: "string" }
+              - label: "固定页面链接"
+                name: "href"
+                widget: "string"
+                required: false
+                hint: "固定页面使用，例如 index.html、about.html。自定义页面可留空。"
+              - label: "自定义页面 Slug"
+                name: "slug"
+                widget: "string"
+                required: false
+                hint: "要和“通用页面管理”里的 Slug 一致，例如 certificates。"
+              - label: "匹配页面"
+                name: "matches"
+                widget: "list"
+                required: false
+                field:
+                  label: "页面文件名"
+                  name: "page"
+                  widget: "string"
+              - label: "是否需要访问密码"
+                name: "requirePassword"
+                widget: "boolean"
+                default: false
+                required: false
+                hint: "打开后，访客点击这个 Tab 需要输入密码。"
+              - label: "访问密码"
+                name: "password"
+                widget: "string"
+                required: false
+                hint: "只有“是否需要访问密码”打开时生效。"
+              - { label: "是否显示", name: "visible", widget: "boolean", default: true }
+      - name: "custom_pages"
+        label: "通用页面管理"
+        file: "data/custom-pages.json"
+        format: "json"
+        fields:
+          - label: "页面列表"
+            name: "pages"
+            widget: "list"
+            summary: "{{fields.slug}} {{fields.titleHtml}}"
+            fields:
+              - label: "Slug"
+                name: "slug"
+                widget: "string"
+                hint: "英文唯一标识，例如 certificates。导航 Tab 里要填写同一个 Slug。"
+              - { label: "顶部标签", name: "eyebrow", widget: "string" }
+              - { label: "页面标题 HTML", name: "titleHtml", widget: "text" }
+              - { label: "页面说明", name: "description", widget: "text" }
+              - label: "页面卡片"
+                name: "cards"
+                widget: "list"
+                summary: "{{fields.number}} {{fields.title}}"
+                fields:
+                  - { label: "编号", name: "number", widget: "string" }
+                  - { label: "颜色", name: "color", widget: "select", options: ["blue", "coral", "yellow", "green", "violet"] }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "说明", name: "description", widget: "text" }
+                  - { label: "小标签", name: "meta", widget: "string", required: false }
+      - name: "site"
+        label: "首页与关于我"
+        file: "data/site.json"
+        format: "json"
+        fields:
+          - label: "首页"
+            name: "home"
+            widget: "object"
+            fields:
+              - { label: "顶部标签", name: "eyebrow", widget: "string" }
+              - { label: "首页大标题 HTML", name: "titleHtml", widget: "text" }
+              - { label: "首页简介", name: "lead", widget: "text" }
+              - { label: "核心能力标题 HTML", name: "servicesTitleHtml", widget: "text" }
+              - { label: "核心能力说明", name: "servicesDescription", widget: "text" }
+              - label: "核心能力卡片"
+                name: "services"
+                widget: "list"
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "颜色", name: "color", widget: "select", options: ["blue", "yellow", "coral"] }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "描述", name: "description", widget: "text" }
+          - label: "关于我"
+            name: "about"
+            widget: "object"
+            fields:
+              - label: "ID Card"
+                name: "idCard"
+                widget: "object"
+                fields:
+                  - { label: "Name", name: "name", widget: "string" }
+                  - { label: "Major", name: "major", widget: "string" }
+                  - { label: "Job", name: "job", widget: "string" }
+                  - { label: "Birth", name: "birth", widget: "string" }
+                  - { label: "Location", name: "location", widget: "string" }
+              - { label: "顶部标签", name: "eyebrow", widget: "string" }
+              - { label: "关于我标题 HTML", name: "titleHtml", widget: "text" }
+              - { label: "关于我简介", name: "lead", widget: "text" }
+              - label: "亮点"
+                name: "facts"
+                widget: "list"
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "颜色", name: "color", widget: "select", options: ["blue", "coral", "yellow", "green"] }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "描述", name: "description", widget: "text" }
+              - { label: "宣言小标题", name: "statementLabel", widget: "string" }
+              - { label: "宣言轮播文字", name: "statementText", widget: "string" }
+              - { label: "宣言说明", name: "statementCopy", widget: "text" }
+          - label: "网站设置"
+            name: "settings"
+            widget: "object"
+            fields:
+              - { label: "项目经验密码", name: "projectPassword", widget: "string" }
+              - { label: "联系邮箱", name: "email", widget: "string" }
+              - label: "禁止复制保护"
+                name: "copyProtection"
+                widget: "boolean"
+                default: true
+                hint: "打开后，前台禁止选中、复制、右键、拖拽和常见复制快捷键；关闭后恢复正常。"
+          - label: "底部友情链接与声明"
+            name: "footer"
+            widget: "object"
+            fields:
+              - { label: "友情链接标题", name: "friendLinksTitle", widget: "string" }
+              - label: "友情链接"
+                name: "friendLinks"
+                widget: "list"
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "名称", name: "label", widget: "string" }
+                  - { label: "链接", name: "url", widget: "string" }
+              - { label: "声明标题", name: "statementTitle", widget: "string" }
+              - { label: "网站声明", name: "statement", widget: "text" }
+              - { label: "版权文案", name: "copyright", widget: "string" }
+      - name: "projects"
+        label: "项目经验"
+        file: "data/projects.json"
+        format: "json"
+        fields:
+          - label: "项目卡片"
+            name: "projects"
+            widget: "list"
+            summary: "{{fields.number}} {{fields.title}}"
+            fields:
+              - { label: "时间", name: "date", widget: "string" }
+              - { label: "编号", name: "number", widget: "string" }
+              - { label: "颜色", name: "color", widget: "select", options: ["blue", "pink", "green", "yellow"] }
+              - { label: "项目名称", name: "title", widget: "string" }
+              - { label: "项目描述", name: "description", widget: "text" }
+              - { label: "测试工具", name: "tools", widget: "text" }
+              - label: "项目要点"
+                name: "points"
+                widget: "list"
+                field:
+                  label: "要点"
+                  name: "point"
+                  widget: "text"
+      - name: "experience"
+        label: "工作经历"
+        file: "data/experience.json"
+        format: "json"
+        fields:
+          - { label: "区块标题 HTML", name: "introTitleHtml", widget: "text" }
+          - { label: "区块说明", name: "introLead", widget: "text" }
+          - label: "经历卡片"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.date}} {{fields.company}}"
+            fields:
+              - { label: "时间", name: "date", widget: "string" }
+              - { label: "图标", name: "icon", widget: "string" }
+              - { label: "颜色", name: "color", widget: "select", options: ["blue", "coral", "green", "yellow"] }
+              - { label: "公司", name: "company", widget: "string" }
+              - { label: "描述", name: "description", widget: "text" }
+      - name: "toolbox"
+        label: "测试工具箱"
+        file: "data/toolbox.json"
+        format: "json"
+        fields:
+          - { label: "顶部标签", name: "eyebrow", widget: "string" }
+          - { label: "页面标题 HTML", name: "titleHtml", widget: "text" }
+          - { label: "页面说明", name: "description", widget: "text" }
+          - label: "工具卡片"
+            name: "tools"
+            widget: "list"
+            summary: "{{fields.number}} {{fields.name}}"
+            fields:
+              - { label: "编号", name: "number", widget: "string" }
+              - { label: "颜色", name: "color", widget: "select", options: ["blue", "coral", "yellow", "green", "violet"] }
+              - { label: "分类", name: "category", widget: "string" }
+              - { label: "工具名称", name: "name", widget: "string" }
+              - { label: "说明", name: "description", widget: "text" }
+              - label: "标签"
+                name: "tags"
+                widget: "list"
+                field:
+                  label: "标签"
+                  name: "tag"
+                  widget: "string"
+      - name: "articles"
+        label: "文章管理"
+        file: "data/articles.json"
+        format: "json"
+        fields:
+          - label: "文章列表"
+            name: "articles"
+            widget: "list"
+            summary: "{{fields.index}} {{fields.title}}"
+            fields:
+              - label: "ID"
+                name: "id"
+                widget: "string"
+                hint: "英文唯一标识，例如 ai-testing-efficiency。文章链接会使用这个 ID。"
+              - label: "编号"
+                name: "index"
+                widget: "string"
+                hint: "例如 01、02、03。"
+              - label: "标题"
+                name: "title"
+                widget: "string"
+              - label: "作者"
+                name: "author"
+                widget: "string"
+                default: "CHILALA"
+              - label: "更新时间"
+                name: "updated"
+                widget: "string"
+                default: "2026.07.10"
+                hint: "建议格式：2026.07.10。"
+              - label: "摘要"
+                name: "summary"
+                widget: "text"
+              - label: "正文段落"
+                name: "body"
+                widget: "list"
+                required: false
+                field:
+                  label: "段落"
+                  name: "paragraph"
+                  widget: "text"
+              - label: "富文本正文 HTML"
+                name: "contentHtml"
+                widget: "text"
+                required: false
+                hint: "可填写 HTML，例如 <h2>小标题</h2><p>正文 <a href='https://example.com'>链接</a> <span style='color:#ff5d70;font-size:24px'>彩色文字</span></p>。填写后详情页优先显示这里。"
