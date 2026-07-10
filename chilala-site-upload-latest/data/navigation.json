@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "label": "首页",
+      "href": "index.html",
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "关于我",
+      "href": "about.html",
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "项目经验",
+      "href": "projects.html",
+      "matches": ["projects-all.html"],
+      "requirePassword": true,
+      "password": "979797",
+      "visible": true
+    },
+    {
+      "label": "测试工具箱",
+      "href": "toolbox.html",
+      "matches": ["toolbox-all.html"],
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "文章",
+      "href": "articles.html",
+      "matches": ["articles-all.html", "article-detail.html"],
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "证书",
+      "slug": "certificates",
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "资源库",
+      "slug": "resources",
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    }
+  ]
+}
