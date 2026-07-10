@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 项目经验</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link active" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="project-page-hero page-band">
+        <div class="section-title">
+          <h1>看看我的 <span class="highlight yellow">项目经验</span></h1>
+          <p>以下项目来自我的真实简历，覆盖仓储供应链、生产制造、电商、财务管理和社区 APP。</p>
+        </div>
+        <form class="article-search project-search" role="search">
+          <input type="search" id="projectSearchInput" placeholder="按项目名搜索，例如：WMS" aria-label="按项目名搜索" />
+        </form>
+        <div class="resume-project-grid" data-project-list>
+          <article class="resume-project-card blue">
+            <div class="project-card-head">
+              <span class="project-date">2025.06 - 至今</span>
+              <span class="project-number">01</span>
+            </div>
+            <h2>WMS仓储供应链系统</h2>
+            <p>面向智能制造企业的仓储管理系统，覆盖出入库流程、库位优化、动态盘点等功能。</p>
+            <div class="tool-box">
+              <strong>测试工具</strong>
+              <span>XMind、MySQL、Navicat、JMeter、Fiddler</span>
+            </div>
+            <ul>
+              <li>参加项目需求分析，结合仓储业务流程提出需求疑问。</li>
+              <li>根据接口文档使用 XMind 编写测试点、接口测试用例，并参与用例评审。</li>
+              <li>使用 JMeter 执行接口测试用例，验证接口参数、业务逻辑和返回结果。</li>
+              <li>负责 WMS 系统功能测试、接口测试及 JMeter 接口自动化测试。</li>
+              <li>参与需求分析，搭建测试环境，协助开发进行冒烟测试。</li>
+              <li>覆盖入库、库存、出库、波次管理等核心模块，从 0 到 1 完成测试。</li>
+              <li>利用 Fiddler 工具对 PDA 端请求和响应进行抓包分析。</li>
+              <li>使用 JMeter 对发货订单、生成拣货单等接口进行并发性能测试。</li>
+              <li>执行 WMS 与 ERP、TMS、MES 外部系统 API 测试，并验证数据一致性。</li>
+              <li>执行主要模块回归测试，验证缺陷是否修复，同时关注是否产生新问题。</li>
+              <li>汇总测试过程、缺陷情况和质量风险，完成测试报告输出。</li>
+            </ul>
+          </article>
+
+          <article class="resume-project-card pink">
+            <div class="project-card-head">
+              <span class="project-date">2022.06 - 2025.02</span>
+              <span class="project-number">02</span>
+            </div>
+            <h2>MES打版生产系统</h2>
+            <p>覆盖工艺路线、BOM 管理、生产派工、在制品跟踪、工时采集和异常处理等生产流程。</p>
+            <div class="tool-box">
+              <strong>测试工具</strong>
+              <span>XMind、MySQL、Navicat、JMeter、LoadRunner、IETest、Chrome、Firefox</span>
+            </div>
+            <ul>
+              <li>熟悉 MES 与 ERP 等上下游系统接口测试，理解生产业务流程。</li>
+              <li>参与需求分析、测试环境搭建、冒烟测试和测试用例评审。</li>
+              <li>根据接口文档使用 XMind 编写测试点和接口测试用例。</li>
+              <li>使用 JMeter 执行接口测试，并通过主流浏览器进行兼容性测试。</li>
+              <li>使用 IETest、Chrome、Firefox 对系统进行兼容性验证。</li>
+              <li>参与 MES 与 ERP 系统接口测试，验证工单同步和业务数据准确性。</li>
+              <li>支持现场实施 UAT 测试，收集现场反馈问题并持续跟踪。</li>
+              <li>独立负责 MES 打板模块全流程测试，支持现场 UAT 并跟踪反馈问题。</li>
+              <li>执行主要模块回归测试，验证缺陷修复情况并编写测试报告。</li>
+            </ul>
+          </article>
+
+          <article class="resume-project-card green">
+            <div class="project-card-head">
+              <span class="project-date">2021.10 - 2022.05</span>
+              <span class="project-number">03</span>
+            </div>
+            <h2>易牵星跨境电商商品服务系统</h2>
+            <p>后台商品管理系统，支持客户端数据信息管理和平台运营商的运营管理。</p>
+            <div class="tool-box">
+              <strong>测试工具</strong>
+              <span>XMind、MySQL、Navicat、Xshell、JMeter</span>
+            </div>
+            <ul>
+              <li>参与需求评审，从用户使用角度提出疑问和优化建议。</li>
+              <li>根据需求文档使用 XMind 提取测试要点，编写测试用例并执行测试。</li>
+              <li>使用边界值、等价类、场景法进行测试，提交并跟踪 BUG。</li>
+              <li>协助开发定位问题并复现缺陷，持续关注 BUG 修复情况。</li>
+              <li>通过 MySQL 数据库增删改查辅助用例执行和数据验证。</li>
+              <li>使用 JMeter 进行接口测试、接口联动自动化测试和简单性能测试。</li>
+              <li>分析测试结果并记录测试问题，将测试结果提交给 PM。</li>
+              <li>对项目测试过程中的问题进行总结，提交测试报告。</li>
+            </ul>
+          </article>
+
+          <article class="resume-project-card yellow">
+            <div class="project-card-head">
+              <span class="project-date">2020.09 - 2021.10</span>
+              <span class="project-number">04</span>
+            </div>
+            <h2>财务管理系统</h2>
+            <p>为企业用户提供财务核算、汇算管理及数据统计分析等功能，通过可视化数据展示提升财务处理效率和数据准确性。</p>
+            <div class="tool-box">
+              <strong>测试工具</strong>
+              <span>XMind、MySQL、Navicat、Linux、Xshell、Postman、Fiddler、LoadRunner、Chrome、Firefox</span>
+            </div>
+            <ul>
+              <li>参与项目需求评审，分析业务需求及逻辑流程，提出疑问和优化建议。</li>
+              <li>搭建测试环境，协助开发完成冒烟测试，验证核心功能可用性。</li>
+              <li>使用 XMind 设计测试点，编写功能测试用例和接口测试用例。</li>
+              <li>使用 Postman 执行接口测试，并通过 MySQL、Navicat 验证数据一致性。</li>
+              <li>使用 Fiddler、LoadRunner、Chrome、Firefox 完成安全、性能和兼容性测试。</li>
+              <li>执行版本回归测试，编写测试报告，为上线提供质量评估依据。</li>
+            </ul>
+          </article>
+
+          <article class="resume-project-card blue">
+            <div class="project-card-head">
+              <span class="project-date">2019.07 - 2020.08</span>
+              <span class="project-number">05</span>
+            </div>
+            <h2>论坛APP项目</h2>
+            <p>集文章发布、动态分享、帖子互动及论友圈社交于一体的移动社区平台，增强用户互动体验和社区活跃度。</p>
+            <div class="tool-box">
+              <strong>测试工具</strong>
+              <span>XMind、MySQL、Navicat、Linux、Xshell、Fiddler、ADB、GT、iTest、Excel</span>
+            </div>
+            <ul>
+              <li>参与需求评审及需求分析，梳理业务流程并识别需求风险点。</li>
+              <li>根据需求文档设计测试点，使用 Excel 编写功能测试用例并参与评审。</li>
+              <li>验证注册登录、文章发布、动态发布、帖子互动、评论点赞、论友圈等核心功能。</li>
+              <li>使用 Fiddler 抓包分析客户端与服务端交互数据，辅助缺陷定位。</li>
+              <li>开展真机兼容性测试、安装升级、切后台、网络切换和弱网专项测试。</li>
+              <li>使用 ADB 结合 Monkey 进行稳定性和随机压力测试，并输出测试报告。</li>
+            </ul>
+          </article>
+        </div>
+        <p class="end-of-list" data-project-end>已全部显示，暂无更多内容了</p>
+        <p class="empty-search" data-project-empty hidden>没有找到对应内容。</p>
+        <div class="more-articles-action">
+          <a class="button secondary" href="projects-all.html">更多项目</a>
+        </div>
+      </section>
+
+      <section class="work-history-section">
+        <div class="work-history-inner page-band">
+          <div class="experience-intro">
+            <h1 data-experience-title>我的 <span class="highlight violet">过往经历</span></h1>
+            <p class="lead" data-experience-lead>从测试助理到软件测试工程师，持续参与业务系统、移动端产品和接口性能测试交付。</p>
+          </div>
+          <div class="timeline" data-experience-list>
+            <article class="thick-card timeline-card">
+              <div class="timeline-top"><strong>2025.06 - 至今</strong><span class="round-icon blue">◔</span></div>
+              <h2>深圳市西之月供应链有限公司</h2>
+              <p>软件测试工程师，负责业务系统功能测试、接口测试、回归测试及质量风险跟进。</p>
+            </article>
+            <article class="thick-card timeline-card">
+              <div class="timeline-top"><strong>2022.06 - 2025.02</strong><span class="round-icon coral">▣</span></div>
+              <h2>深圳广联信息技术咨询顾问有限公司</h2>
+              <p>软件测试工程师，参与 WMS、MES 等系统测试，覆盖功能、接口、性能和回归测试。</p>
+            </article>
+            <article class="thick-card timeline-card">
+              <div class="timeline-top"><strong>2020.09 - 2022.05</strong><span class="round-icon green">□</span></div>
+              <h2>深圳市嘉鸿网络科技有限公司</h2>
+              <p>软件测试工程师，负责测试用例编写、缺陷跟踪、接口测试和数据库数据校验。</p>
+            </article>
+            <article class="thick-card timeline-card">
+              <div class="timeline-top"><strong>2019.07 - 2020.09</strong><span class="round-icon yellow">✦</span></div>
+              <h2>珠海慧聚网络科技有限公司</h2>
+              <p>软件测试助理师，参与移动端项目测试、兼容性测试、专项测试和测试报告输出。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer compact dark-footer">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a class="active" href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info>
+        <div class="footer-links">
+          <strong>友情链接</strong>
+          <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://vercel.com/" target="_blank" rel="noreferrer">Vercel</a>
+          <a href="https://decapcms.org/" target="_blank" rel="noreferrer">Decap CMS</a>
+        </div>
+        <div class="footer-statement">
+          <strong>网站声明</strong>
+          <p>本站为 CHILALA 的个人作品集与学习记录网站，内容仅用于个人展示、经验整理与学习交流。未经允许，请勿复制、转载或用于商业用途。</p>
+        </div>
+      </div>
+      <p>CHILALA · 项目经验</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

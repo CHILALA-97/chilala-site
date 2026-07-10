@@ -1,0 +1,48 @@
+{
+  "pages": [
+    {
+      "slug": "certificates",
+      "eyebrow": "CERTIFICATES",
+      "titleHtml": "我的 <span class=\"highlight yellow\">证书</span>",
+      "description": "这里用来整理和展示与软件测试、质量保障、自动化测试相关的证书、课程和阶段性学习成果。",
+      "cards": [
+        {
+          "number": "01",
+          "color": "blue",
+          "title": "软件测试能力记录",
+          "description": "记录功能测试、接口测试、性能测试和自动化测试相关学习证明。",
+          "meta": "持续更新"
+        },
+        {
+          "number": "02",
+          "color": "yellow",
+          "title": "工具学习证明",
+          "description": "记录 JMeter、Postman、Fiddler、MySQL 等工具的学习和实践成果。",
+          "meta": "QA Tools"
+        }
+      ]
+    },
+    {
+      "slug": "resources",
+      "eyebrow": "RESOURCES",
+      "titleHtml": "测试 <span class=\"highlight coral\">资源库</span>",
+      "description": "收集常用测试模板、检查清单、工具链接和学习资料，让测试工作更容易复用和沉淀。",
+      "cards": [
+        {
+          "number": "01",
+          "color": "green",
+          "title": "测试用例模板",
+          "description": "用于整理功能路径、前置条件、操作步骤、预期结果和执行记录。",
+          "meta": "Template"
+        },
+        {
+          "number": "02",
+          "color": "violet",
+          "title": "上线检查清单",
+          "description": "覆盖需求范围、核心流程、缺陷状态、回归结果和遗留风险。",
+          "meta": "Checklist"
+        }
+      ]
+    }
+  ]
+}
