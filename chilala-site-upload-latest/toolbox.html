@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 测试工具箱</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link active" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="toolbox-hero page-band">
+        <div class="section-title">
+          <p class="eyebrow" data-toolbox-eyebrow>QA TOOLBOX</p>
+          <h1 data-toolbox-title>测试 <span class="highlight yellow">工具箱</span></h1>
+          <p data-toolbox-description>把常用测试工具按场景整理起来，从需求分析、接口验证、性能压测到移动端专项，让每一次测试都有合适的工具和方法。</p>
+        </div>
+      </section>
+
+      <section class="toolbox-section page-band">
+        <div class="toolbox-grid" data-toolbox-list data-limit="3">
+          <article class="tool-card blue">
+            <span class="tool-number">01</span>
+            <p>接口测试</p>
+            <h2>Postman / JMeter</h2>
+            <span>用于接口调试、参数校验、断言验证和接口自动化执行。</span>
+            <div class="tool-tags"><b>接口文档</b><b>参数校验</b><b>断言</b><b>自动化</b></div>
+          </article>
+          <article class="tool-card coral">
+            <span class="tool-number">02</span>
+            <p>性能测试</p>
+            <h2>JMeter / LoadRunner</h2>
+            <span>用于并发压测、响应时间观察、吞吐量分析和性能瓶颈定位。</span>
+            <div class="tool-tags"><b>并发</b><b>响应时间</b><b>吞吐量</b><b>瓶颈分析</b></div>
+          </article>
+          <article class="tool-card yellow">
+            <span class="tool-number">03</span>
+            <p>抓包调试</p>
+            <h2>Fiddler</h2>
+            <span>用于分析客户端请求、响应内容、异常接口和数据传输问题。</span>
+            <div class="tool-tags"><b>抓包</b><b>请求响应</b><b>PDA</b><b>APP</b></div>
+          </article>
+        </div>
+        <div class="more-articles-action">
+          <a class="button secondary" href="toolbox-all.html">更多工具</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a class="active" href="toolbox.html">测试工具箱</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info>
+        <div class="footer-links">
+          <strong>友情链接</strong>
+          <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://vercel.com/" target="_blank" rel="noreferrer">Vercel</a>
+          <a href="https://decapcms.org/" target="_blank" rel="noreferrer">Decap CMS</a>
+        </div>
+        <div class="footer-statement">
+          <strong>网站声明</strong>
+          <p>本站为 CHILALA 的个人作品集与学习记录网站，内容仅用于个人展示、经验整理与学习交流。未经允许，请勿复制、转载或用于商业用途。</p>
+        </div>
+      </div>
+      <p>CHILALA · 测试工具箱</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>
