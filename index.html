@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CHILALA | 首页</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -119,6 +120,20 @@
       <p>Made by CHILALA · 静态个人网站</p>
     </footer>
 
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", (user) => {
+          const hasIdentityToken = /(?:invite|recovery|confirmation|access)_token=/.test(window.location.hash);
+          if (!user && hasIdentityToken) {
+            window.netlifyIdentity.open();
+          }
+        });
+
+        window.netlifyIdentity.on("login", () => {
+          window.location.href = "/admin/";
+        });
+      }
+    </script>
     <script src="script.js?v=2"></script>
   </body>
 </html>
