@@ -1,6 +1,5 @@
 backend:
-  name: github
-  repo: CHILALA-97/chilala-site
+  name: git-gateway
   branch: main
 
 media_folder: "assets/uploads"
