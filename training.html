@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 测试模拟训练平台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link active" href="training.html">测试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="training-hero page-band">
+        <div class="section-title">
+          <p class="eyebrow" data-training-eyebrow>QA TRAINING LAB</p>
+          <h1 data-training-title>测试模拟 <span class="highlight yellow">训练平台</span></h1>
+          <p data-training-description>把 5 个真实项目经验拆成多页可玩练习系统：每个项目都有业务数据、操作表单、测试任务、隐藏缺陷和缺陷提交训练。</p>
+        </div>
+      </section>
+
+      <section class="training-section page-band">
+        <div class="training-grid training-grid-large" data-training-systems data-limit="6"></div>
+        <div class="more-articles-action">
+          <a class="button secondary" href="training-all.html">更多训练</a>
+        </div>
+      </section>
+
+      <section class="training-resource-section page-band" aria-labelledby="practice-resource-title">
+        <div class="section-title">
+          <p class="eyebrow">REAL PRACTICE RESOURCES</p>
+          <h2 id="practice-resource-title">小白真实练习 <span class="highlight coral">资源地图</span></h2>
+          <p>企业里的 MES、WMS、财务系统很多不公开，练习时建议用开源系统或官方 Demo 搭模拟环境：先跑主流程，再练接口、数据库、权限、兼容、回归和缺陷闭环。</p>
+        </div>
+        <form class="article-search resource-search" role="search">
+          <input type="search" id="resourceSearchInput" placeholder="按资源类型搜索，例如：银行 / 游戏 / CRM" aria-label="按资源类型搜索" />
+        </form>
+
+        <div class="resource-map" data-resource-map>
+          <article class="resource-card blue" data-title="论坛 APP Discourse Flarum NodeBB 注册 登录 发帖 评论 点赞 举报 审核 角色权限 移动端 内容安全">
+            <span>论坛 APP</span>
+            <h3>Discourse / Flarum / NodeBB</h3>
+            <p>适合练注册登录、发帖、评论、点赞、举报、审核、角色权限、移动端兼容和内容安全。</p>
+            <div class="resource-links">
+              <a href="https://www.discourse.org/" target="_blank" rel="noreferrer">Discourse</a>
+              <a href="https://flarum.org/" target="_blank" rel="noreferrer">Flarum</a>
+              <a href="https://nodebb.org/" target="_blank" rel="noreferrer">NodeBB</a>
+            </div>
+          </article>
+
+          <article class="resource-card yellow" data-title="财务管理 ERPNext Odoo Dolibarr 费用 收付款 发票 审批流 报表 权限 多币种 导出 数据一致性">
+            <span>财务管理</span>
+            <h3>ERPNext / Odoo / Dolibarr</h3>
+            <p>适合练费用单、收付款、发票、审批流、报表、权限隔离、多币种、导出和数据一致性。</p>
+            <div class="resource-links">
+              <a href="https://erpnext.com/" target="_blank" rel="noreferrer">ERPNext</a>
+              <a href="https://www.odoo.com/app/accounting" target="_blank" rel="noreferrer">Odoo Accounting</a>
+              <a href="https://www.dolibarr.org/" target="_blank" rel="noreferrer">Dolibarr</a>
+            </div>
+          </article>
+
+          <article class="resource-card coral" data-title="跨境电商 nopCommerce Spree WooCommerce 商品中心 SKU 多规格 多语言 多币种 海外仓 订单 支付 平台同步 结算">
+            <span>跨境电商</span>
+            <h3>nopCommerce / Spree Commerce</h3>
+            <p>适合练商品中心、SKU、多规格、多语言、多币种、海外仓、订单、支付、平台同步和结算链路。</p>
+            <div class="resource-links">
+              <a href="https://www.nopcommerce.com/" target="_blank" rel="noreferrer">nopCommerce</a>
+              <a href="https://spreecommerce.org/" target="_blank" rel="noreferrer">Spree</a>
+              <a href="https://woocommerce.com/" target="_blank" rel="noreferrer">WooCommerce</a>
+            </div>
+          </article>
+
+          <article class="resource-card green" data-title="MES 生产 ERPNext Manufacturing Odoo Manufacturing OFBiz 工单 BOM 工艺路线 派工 报工 质检 完工入库 UAT">
+            <span>MES 生产</span>
+            <h3>ERPNext Manufacturing / Odoo Manufacturing / OFBiz</h3>
+            <p>适合练工单、BOM、工艺路线、派工、报工、质检、完工入库、ERP/WMS 联动和现场 UAT。</p>
+            <div class="resource-links">
+              <a href="https://erpnext.com/open-source-manufacturing-erp-software" target="_blank" rel="noreferrer">ERPNext MES</a>
+              <a href="https://www.odoo.com/app/manufacturing" target="_blank" rel="noreferrer">Odoo MRP</a>
+              <a href="https://ofbiz.apache.org/" target="_blank" rel="noreferrer">Apache OFBiz</a>
+            </div>
+          </article>
+
+          <article class="resource-card violet" data-title="WMS 仓储 ERPNext Stock Odoo Inventory OpenBoxes 入库 出库 库存锁定 库位 批次序列号 盘点 拣货 API 同步 账实一致">
+            <span>WMS 仓储</span>
+            <h3>ERPNext Stock / Odoo Inventory / OpenBoxes</h3>
+            <p>适合练入库、出库、库存锁定、库位、批次序列号、盘点、拣货、API 同步和账实一致。</p>
+            <div class="resource-links">
+              <a href="https://erpnext.com/open-source-inventory-management-software" target="_blank" rel="noreferrer">ERPNext Stock</a>
+              <a href="https://www.odoo.com/app/inventory" target="_blank" rel="noreferrer">Odoo Inventory</a>
+              <a href="https://openboxes.com/" target="_blank" rel="noreferrer">OpenBoxes</a>
+            </div>
+          </article>
+
+          <article class="resource-card blue" data-title="CRM 客户 SuiteCRM Odoo CRM EspoCRM 线索 客户 公海 商机 跟进记录 销售报表 重复客户 角色权限">
+            <span>CRM 客户</span>
+            <h3>SuiteCRM / Odoo CRM / EspoCRM</h3>
+            <p>适合练线索、客户、公海、商机、跟进记录、销售报表、重复客户和角色权限。</p>
+            <div class="resource-links">
+              <a href="https://suitecrm.com/" target="_blank" rel="noreferrer">SuiteCRM</a>
+              <a href="https://www.odoo.com/app/crm" target="_blank" rel="noreferrer">Odoo CRM</a>
+              <a href="https://www.espocrm.com/" target="_blank" rel="noreferrer">EspoCRM</a>
+            </div>
+          </article>
+
+          <article class="resource-card yellow" data-title="OA 审批 低代码表单 Flowable Camunda 请假 报销 采购审批 条件流 会签 加签 撤回 驳回 审批日志">
+            <span>OA 审批</span>
+            <h3>低代码表单 / Flowable / Camunda</h3>
+            <p>适合练请假、报销、采购审批、条件流、会签、加签、撤回、驳回和审批日志。</p>
+            <div class="resource-links">
+              <a href="https://www.flowable.com/open-source/" target="_blank" rel="noreferrer">Flowable</a>
+              <a href="https://camunda.com/" target="_blank" rel="noreferrer">Camunda</a>
+              <a href="https://www.odoo.com/app/employees" target="_blank" rel="noreferrer">Odoo Employees</a>
+            </div>
+          </article>
+
+          <article class="resource-card coral" data-title="HR 人事 OrangeHRM Odoo Employees 员工档案 入职 转正 调岗 离职 考勤 薪资权限 敏感信息脱敏">
+            <span>HR 人事</span>
+            <h3>OrangeHRM / Odoo Employees</h3>
+            <p>适合练员工档案、入职、转正、调岗、离职、考勤、薪资权限和敏感信息脱敏。</p>
+            <div class="resource-links">
+              <a href="https://www.orangehrm.com/" target="_blank" rel="noreferrer">OrangeHRM</a>
+              <a href="https://www.odoo.com/app/employees" target="_blank" rel="noreferrer">Odoo Employees</a>
+              <a href="https://erpnext.com/open-source-hr-payroll-software" target="_blank" rel="noreferrer">ERPNext HR</a>
+            </div>
+          </article>
+
+          <article class="resource-card green" data-title="订单支付 Saleor Medusa Magento Open Source 购物车 订单状态 优惠 支付回调 退款 库存扣减 流水 财务对账">
+            <span>订单支付</span>
+            <h3>Saleor / Medusa / Magento Open Source</h3>
+            <p>适合练购物车、订单状态、优惠、支付回调、退款、库存扣减、流水和财务对账。</p>
+            <div class="resource-links">
+              <a href="https://saleor.io/" target="_blank" rel="noreferrer">Saleor</a>
+              <a href="https://medusajs.com/" target="_blank" rel="noreferrer">Medusa</a>
+              <a href="https://business.adobe.com/products/magento/open-source.html" target="_blank" rel="noreferrer">Magento</a>
+            </div>
+          </article>
+
+          <article class="resource-card violet" data-title="TMS 物流 Odoo Fleet OpenBoxes ERPNext Delivery 运单 承运商 物流轨迹 签收 异常件 费用规则 订单 WMS 联动">
+            <span>TMS 物流</span>
+            <h3>Odoo Fleet / OpenBoxes / ERPNext Delivery</h3>
+            <p>适合练运单、承运商、物流轨迹、签收、异常件、费用规则和订单/WMS 联动。</p>
+            <div class="resource-links">
+              <a href="https://www.odoo.com/app/fleet" target="_blank" rel="noreferrer">Odoo Fleet</a>
+              <a href="https://openboxes.com/" target="_blank" rel="noreferrer">OpenBoxes</a>
+              <a href="https://erpnext.com/" target="_blank" rel="noreferrer">ERPNext</a>
+            </div>
+          </article>
+
+          <article class="resource-card blue" data-title="游戏测试 Godot Unity Learn PlayFab 角色 背包 道具 充值 活动奖励 排行榜 弱网 多端登录 反作弊">
+            <span>游戏测试</span>
+            <h3>Godot / Unity Learn / Game Server Demo</h3>
+            <p>适合练角色、背包、道具、充值、活动奖励、排行榜、弱网、多端登录和反作弊思维。</p>
+            <div class="resource-links">
+              <a href="https://godotengine.org/" target="_blank" rel="noreferrer">Godot</a>
+              <a href="https://learn.unity.com/" target="_blank" rel="noreferrer">Unity Learn</a>
+              <a href="https://playfab.com/" target="_blank" rel="noreferrer">PlayFab</a>
+            </div>
+          </article>
+
+          <article class="resource-card yellow" data-title="银行金融 Apache Fineract Mifos ParaBank 账户 转账 余额 限额 验证码 风控 冲正 流水 对账 金额精度">
+            <span>银行金融</span>
+            <h3>Apache Fineract / Mifos / Demo Bank</h3>
+            <p>适合练账户、转账、余额、限额、验证码、风控、冲正、流水、对账和金额精度。</p>
+            <div class="resource-links">
+              <a href="https://fineract.apache.org/" target="_blank" rel="noreferrer">Apache Fineract</a>
+              <a href="https://mifos.org/" target="_blank" rel="noreferrer">Mifos</a>
+              <a href="https://parabank.parasoft.com/" target="_blank" rel="noreferrer">ParaBank</a>
+            </div>
+          </article>
+        </div>
+        <p class="end-of-list" data-resource-end>已全部显示，暂无更多内容了</p>
+        <p class="empty-search" data-resource-empty hidden>没有找到对应内容。</p>
+        <div class="more-articles-action">
+          <a class="button secondary" href="training-resources-all.html">更多资源</a>
+        </div>
+
+        <div class="resource-advice">
+          <strong>CHILALA 推荐练法</strong>
+          <p>小白路线：先用论坛、CRM、OA、HR 练增删改查、权限和流程；再用订单支付、银行、游戏练金额、状态、风控和幂等；最后用 WMS、MES、跨境电商、TMS 练复杂业务链路。不要一开始追求完全等同企业内网系统，先把“业务主流程 + 异常流 + 数据校验 + 缺陷闭环”练扎实。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a class="active" href="training.html">测试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info>
+        <div class="footer-links">
+          <strong>友情链接</strong>
+          <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://vercel.com/" target="_blank" rel="noreferrer">Vercel</a>
+          <a href="https://decapcms.org/" target="_blank" rel="noreferrer">Decap CMS</a>
+        </div>
+        <div class="footer-statement">
+          <strong>网站声明</strong>
+          <p>本站为 CHILALA 的个人作品集与学习记录网站，内容仅用于个人展示、经验整理与学习交流。未经允许，请勿复制、转载或用于商业用途。</p>
+        </div>
+      </div>
+      <p>CHILALA · 测试模拟训练平台</p>
+    </footer>
+    <script src="script.js?v=4"></script>
+  </body>
+</html>

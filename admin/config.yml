@@ -217,6 +217,175 @@ collections:
                   label: "标签"
                   name: "tag"
                   widget: "string"
+      - name: "training"
+        label: "测试模拟训练平台"
+        file: "data/training.json"
+        format: "json"
+        fields:
+          - { label: "顶部标签", name: "eyebrow", widget: "string" }
+          - { label: "页面标题 HTML", name: "titleHtml", widget: "text" }
+          - { label: "页面说明", name: "description", widget: "text" }
+          - label: "训练系统卡片"
+            name: "systems"
+            widget: "list"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string", hint: "例如 wms、mes、ecommerce、finance、forum。要和页面 body 标识一致。" }
+              - { label: "页面链接", name: "link", widget: "string", hint: "例如 training-wms.html。" }
+              - { label: "系统名称", name: "name", widget: "string" }
+              - { label: "状态", name: "status", widget: "string" }
+              - { label: "业务标签", name: "badge", widget: "string" }
+              - { label: "说明", name: "description", widget: "text" }
+              - label: "模块"
+                name: "modules"
+                widget: "list"
+                field:
+                  label: "模块"
+                  name: "module"
+                  widget: "string"
+              - label: "训练任务"
+                name: "tasks"
+                widget: "list"
+                summary: "{{fields.number}} {{fields.title}}"
+                fields:
+                  - { label: "编号", name: "number", widget: "string" }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "说明", name: "description", widget: "text" }
+              - label: "数据表列名"
+                name: "columns"
+                widget: "list"
+                field:
+                  label: "列名"
+                  name: "column"
+                  widget: "string"
+              - label: "初始业务数据"
+                name: "records"
+                widget: "list"
+                hint: "每一行用英文逗号分隔，例如 SKU-WMS-001,智能扫码枪,A-01-01,120,正常。"
+                field:
+                  label: "数据行"
+                  name: "row"
+                  widget: "list"
+                  field:
+                    label: "单元格"
+                    name: "cell"
+                    widget: "string"
+              - label: "操作表单"
+                name: "actions"
+                widget: "list"
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "ID", name: "id", widget: "string" }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "按钮文字", name: "button", widget: "string" }
+                  - { label: "训练提示", name: "tip", widget: "text" }
+                  - { label: "执行日志模板", name: "log", widget: "text", hint: "可使用 {字段名}，例如 {sku}。" }
+                  - label: "字段"
+                    name: "fields"
+                    widget: "list"
+                    summary: "{{fields.label}}"
+                    fields:
+                      - { label: "显示名称", name: "label", widget: "string" }
+                      - { label: "字段名", name: "name", widget: "string" }
+                      - { label: "类型", name: "type", widget: "select", options: ["text", "number"], default: "text", required: false }
+                      - { label: "默认值", name: "value", widget: "string", required: false }
+                      - { label: "自动生成前缀", name: "autoGenerate", widget: "string", required: false, hint: "例如 CASE、WMS、FIN。填写后前台可随机生成编号。" }
+                      - label: "下拉选项"
+                        name: "options"
+                        widget: "list"
+                        required: false
+                        field:
+                          label: "选项"
+                          name: "option"
+                          widget: "string"
+                  - label: "场景预设"
+                    name: "presets"
+                    widget: "list"
+                    required: false
+                    collapsed: true
+                    summary: "{{fields.label}}"
+                    fields:
+                      - { label: "预设名称", name: "label", widget: "string" }
+                      - label: "自动填充值"
+                        name: "values"
+                        widget: "object"
+                        collapsed: true
+                        fields:
+                          - { label: "案例编号", name: "caseId", widget: "string", required: false }
+                          - { label: "规则编号", name: "ruleId", widget: "string", required: false }
+                          - { label: "案例类型", name: "caseType", widget: "string", required: false }
+                          - { label: "销售地区", name: "region", widget: "string", required: false }
+                          - { label: "平台", name: "platform", widget: "string", required: false }
+                          - { label: "商品类型", name: "productType", widget: "string", required: false }
+                          - { label: "仓型", name: "warehouse", widget: "string", required: false }
+                          - { label: "发货仓型", name: "warehouseType", widget: "string", required: false }
+                          - { label: "展示币", name: "displayCurrency", widget: "string", required: false }
+                          - { label: "结算币", name: "settleCurrency", widget: "string", required: false }
+                          - { label: "展示币/结算币", name: "currency", widget: "string", required: false }
+                          - { label: "税费规则", name: "taxRule", widget: "string", required: false }
+                          - { label: "重点风险", name: "risk", widget: "string", required: false }
+              - label: "隐藏缺陷提示"
+                name: "knownBugs"
+                widget: "list"
+                field:
+                  label: "提示"
+                  name: "bug"
+                  widget: "text"
+              - label: "检查清单"
+                name: "scenarios"
+                widget: "list"
+                required: false
+                field:
+                  label: "检查点"
+                  name: "scenario"
+                  widget: "text"
+              - label: "经验知识补给"
+                name: "knowledge"
+                widget: "object"
+                required: false
+                collapsed: true
+                fields:
+                  - { label: "岗位视角", name: "roleFocus", widget: "text", required: false }
+                  - label: "常见情况"
+                    name: "commonCases"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "情况"
+                      name: "case"
+                      widget: "text"
+                  - label: "行业常识"
+                    name: "industryKnowledge"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "常识"
+                      name: "item"
+                      widget: "text"
+                  - label: "核心术语"
+                    name: "terms"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "术语"
+                      name: "term"
+                      widget: "text"
+                  - label: "老手提醒"
+                    name: "seniorTips"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "提醒"
+                      name: "tip"
+                      widget: "text"
+                  - label: "拓展测试"
+                    name: "extensionTests"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "拓展项"
+                      name: "test"
+                      widget: "text"
       - name: "articles"
         label: "文章管理"
         file: "data/articles.json"

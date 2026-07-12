@@ -508,6 +508,665 @@ function renderToolboxContent(toolbox) {
   }
 }
 
+const defaultTrainingData = {
+  eyebrow: "QA TRAINING LAB",
+  titleHtml: '测试模拟 <span class="highlight yellow">训练平台</span>',
+  description: "把真实 WMS 项目经验拆成一个可操作练习场：新人可以按任务说明执行测试、发现缺陷、提交记录并做回归。",
+  systems: [
+    { name: "WMS 仓储供应链系统", status: "已开放", description: "覆盖入库、库存、出库、库位、盘点和缺陷闭环，适合练功能测试、接口思维、数据校验和回归测试。", modules: ["入库单", "库存查询", "出库扣减", "盘点调整", "缺陷提交"] },
+    { name: "MES 打版生产系统", status: "规划中", description: "后续可扩展工单、BOM、工艺路线、派工、生产进度和异常处理。", modules: ["工单", "BOM", "派工", "工时", "异常"] },
+    { name: "论坛 APP", status: "规划中", description: "后续可扩展注册登录、发帖、评论点赞、弱网和真机兼容性练习。", modules: ["登录", "发帖", "评论", "点赞", "弱网"] }
+  ],
+  tasks: [
+    { number: "01", title: "需求评审训练", description: "阅读 WMS 入库、出库和盘点规则，至少提出 5 个需求疑问。" },
+    { number: "02", title: "功能测试训练", description: "执行新增入库单、出库扣减、盘点调整，观察库存数量和状态变化。" },
+    { number: "03", title: "缺陷发现训练", description: "平台里故意埋了库存边界、重复提交和盘点备注相关问题，请尝试发现并提交缺陷。" },
+    { number: "04", title: "回归验证训练", description: "提交缺陷后，根据缺陷描述补充回归范围和验收标准。" }
+  ],
+  inventory: [
+    { sku: "SKU-WMS-001", name: "智能扫码枪", location: "A-01-01", stock: 120, status: "正常" },
+    { sku: "SKU-WMS-002", name: "PDA 手持终端", location: "A-02-03", stock: 38, status: "低库存" },
+    { sku: "SKU-WMS-003", name: "包装耗材", location: "B-03-02", stock: 560, status: "正常" }
+  ],
+  knownBugs: [
+    "出库数量等于当前库存时，系统没有把状态改成缺货。",
+    "盘点调整允许负数库存，需要测试人员识别边界风险。",
+    "新增入库单连续点击两次可能重复入库。"
+  ]
+};
+
+let trainingInventory = [];
+let trainingLog = [];
+
+function getInventoryStatus(stock) {
+  if (stock <= 0) {
+    return "缺货";
+  }
+  if (stock < 50) {
+    return "低库存";
+  }
+  return "正常";
+}
+
+function addTrainingLog(message, type = "info") {
+  const timestamp = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  trainingLog.unshift({ timestamp, message, type });
+  const logList = document.querySelector("[data-lab-log]");
+  if (!logList) {
+    return;
+  }
+  logList.innerHTML = trainingLog
+    .slice(0, 12)
+    .map((item) => `<li class="${escapeHtml(item.type)}"><b>${escapeHtml(item.timestamp)}</b><span>${escapeHtml(item.message)}</span></li>`)
+    .join("");
+}
+
+function renderInventoryTable(keyword = "") {
+  const table = document.querySelector("[data-inventory-table]");
+  if (!table) {
+    return;
+  }
+  const normalizedKeyword = keyword.trim().toLowerCase();
+  const rows = trainingInventory.filter((item) => {
+    const text = [item.sku, item.name, item.location, item.status].join(" ").toLowerCase();
+    return text.includes(normalizedKeyword);
+  });
+
+  table.innerHTML = `
+    <div class="inventory-row inventory-row-head">
+      <span>SKU</span><span>商品</span><span>库位</span><span>库存</span><span>状态</span>
+    </div>
+    ${
+      rows.length
+        ? rows
+            .map((item) => `
+              <div class="inventory-row">
+                <span>${escapeHtml(item.sku)}</span>
+                <span>${escapeHtml(item.name)}</span>
+                <span>${escapeHtml(item.location)}</span>
+                <span>${escapeHtml(item.stock)}</span>
+                <span><b class="stock-status">${escapeHtml(item.status)}</b></span>
+              </div>
+            `)
+            .join("")
+        : '<p class="lab-empty">没有找到对应库存。</p>'
+    }
+  `;
+}
+
+function findInventoryItem(sku) {
+  return trainingInventory.find((item) => item.sku.toLowerCase() === String(sku).trim().toLowerCase());
+}
+
+function getTrainingSystem(training) {
+  const slug = document.body.dataset.trainingSystem;
+  return (training.systems || []).find((system) => system.slug === slug);
+}
+
+function renderTrainingOverview(training) {
+  setText("[data-training-eyebrow]", training.eyebrow);
+  setHtml("[data-training-title]", training.titleHtml);
+  setText("[data-training-description]", training.description);
+
+  const systemGrid = document.querySelector("[data-training-systems]");
+  if (!systemGrid || !Array.isArray(training.systems)) {
+    return;
+  }
+
+  const limit = Number(systemGrid.dataset.limit);
+  const visibleSystems = Number.isFinite(limit) && limit > 0 ? training.systems.slice(0, limit) : training.systems;
+
+  systemGrid.innerHTML = visibleSystems
+    .map((system, index) => `
+      <a class="training-card ${["blue", "coral", "green", "violet", "yellow"][index % 5]}" href="${escapeHtml(system.link || "training.html")}" data-title="${escapeHtml([
+        system.name,
+        system.status,
+        system.badge,
+        system.description,
+        ...(system.modules || [])
+      ].join(" "))}">
+        <span>${escapeHtml(system.status)}</span>
+        <h2>${escapeHtml(system.name)}</h2>
+        <p>${escapeHtml(system.description)}</p>
+        <div class="tool-tags">${(system.modules || []).map((module) => `<b>${escapeHtml(module)}</b>`).join("")}</div>
+        <strong class="training-enter">进入练习</strong>
+      </a>
+    `)
+    .join("");
+
+  setupTrainingListing(systemGrid);
+}
+
+function setupTrainingListing(systemGrid) {
+  if (!systemGrid || systemGrid.dataset.trainingListingReady === "true") {
+    return;
+  }
+
+  const searchInput = document.querySelector("#trainingSearchInput");
+  const emptySearch = document.querySelector("[data-training-empty]");
+  const endOfList = document.querySelector("[data-training-end]");
+  if (!searchInput && !emptySearch && !endOfList) {
+    return;
+  }
+
+  systemGrid.dataset.trainingListingReady = "true";
+  const cards = Array.from(systemGrid.querySelectorAll("[data-title]"));
+  const updateEndMessage = setupListEndMessage(systemGrid, endOfList, cards.length);
+  setupListingSearch(systemGrid, searchInput, emptySearch, endOfList, updateEndMessage);
+}
+
+const trainingResourceCards = [
+  {
+    color: "blue",
+    type: "论坛 APP",
+    title: "Discourse / Flarum / NodeBB",
+    description: "适合练注册登录、发帖、评论、点赞、举报、审核、角色权限、移动端兼容和内容安全。",
+    keywords: "论坛 APP Discourse Flarum NodeBB 注册 登录 发帖 评论 点赞 举报 审核 角色权限 移动端 内容安全",
+    links: [
+      ["Discourse", "https://www.discourse.org/"],
+      ["Flarum", "https://flarum.org/"],
+      ["NodeBB", "https://nodebb.org/"]
+    ]
+  },
+  {
+    color: "yellow",
+    type: "财务管理",
+    title: "ERPNext / Odoo / Dolibarr",
+    description: "适合练费用单、收付款、发票、审批流、报表、权限隔离、多币种、导出和数据一致性。",
+    keywords: "财务管理 ERPNext Odoo Dolibarr 费用 收付款 发票 审批流 报表 权限 多币种 导出 数据一致性",
+    links: [
+      ["ERPNext", "https://erpnext.com/"],
+      ["Odoo Accounting", "https://www.odoo.com/app/accounting"],
+      ["Dolibarr", "https://www.dolibarr.org/"]
+    ]
+  },
+  {
+    color: "coral",
+    type: "跨境电商",
+    title: "nopCommerce / Spree Commerce",
+    description: "适合练商品中心、SKU、多规格、多语言、多币种、海外仓、订单、支付、平台同步和结算链路。",
+    keywords: "跨境电商 nopCommerce Spree WooCommerce 商品中心 SKU 多规格 多语言 多币种 海外仓 订单 支付 平台同步 结算",
+    links: [
+      ["nopCommerce", "https://www.nopcommerce.com/"],
+      ["Spree", "https://spreecommerce.org/"],
+      ["WooCommerce", "https://woocommerce.com/"]
+    ]
+  },
+  {
+    color: "green",
+    type: "MES 生产",
+    title: "ERPNext Manufacturing / Odoo Manufacturing / OFBiz",
+    description: "适合练工单、BOM、工艺路线、派工、报工、质检、完工入库、ERP/WMS 联动和现场 UAT。",
+    keywords: "MES 生产 ERPNext Manufacturing Odoo Manufacturing OFBiz 工单 BOM 工艺路线 派工 报工 质检 完工入库 UAT",
+    links: [
+      ["ERPNext MES", "https://erpnext.com/open-source-manufacturing-erp-software"],
+      ["Odoo MRP", "https://www.odoo.com/app/manufacturing"],
+      ["Apache OFBiz", "https://ofbiz.apache.org/"]
+    ]
+  },
+  {
+    color: "violet",
+    type: "WMS 仓储",
+    title: "ERPNext Stock / Odoo Inventory / OpenBoxes",
+    description: "适合练入库、出库、库存锁定、库位、批次序列号、盘点、拣货、API 同步和账实一致。",
+    keywords: "WMS 仓储 ERPNext Stock Odoo Inventory OpenBoxes 入库 出库 库存锁定 库位 批次序列号 盘点 拣货 API 同步 账实一致",
+    links: [
+      ["ERPNext Stock", "https://erpnext.com/open-source-inventory-management-software"],
+      ["Odoo Inventory", "https://www.odoo.com/app/inventory"],
+      ["OpenBoxes", "https://openboxes.com/"]
+    ]
+  },
+  {
+    color: "blue",
+    type: "CRM 客户",
+    title: "SuiteCRM / Odoo CRM / EspoCRM",
+    description: "适合练线索、客户、公海、商机、跟进记录、销售报表、重复客户和角色权限。",
+    keywords: "CRM 客户 SuiteCRM Odoo CRM EspoCRM 线索 客户 公海 商机 跟进记录 销售报表 重复客户 角色权限",
+    links: [
+      ["SuiteCRM", "https://suitecrm.com/"],
+      ["Odoo CRM", "https://www.odoo.com/app/crm"],
+      ["EspoCRM", "https://www.espocrm.com/"]
+    ]
+  },
+  {
+    color: "yellow",
+    type: "OA 审批",
+    title: "低代码表单 / Flowable / Camunda",
+    description: "适合练请假、报销、采购审批、条件流、会签、加签、撤回、驳回和审批日志。",
+    keywords: "OA 审批 低代码表单 Flowable Camunda 请假 报销 采购审批 条件流 会签 加签 撤回 驳回 审批日志",
+    links: [
+      ["Flowable", "https://www.flowable.com/open-source/"],
+      ["Camunda", "https://camunda.com/"],
+      ["Odoo Employees", "https://www.odoo.com/app/employees"]
+    ]
+  },
+  {
+    color: "coral",
+    type: "HR 人事",
+    title: "OrangeHRM / Odoo Employees",
+    description: "适合练员工档案、入职、转正、调岗、离职、考勤、薪资权限和敏感信息脱敏。",
+    keywords: "HR 人事 OrangeHRM Odoo Employees 员工档案 入职 转正 调岗 离职 考勤 薪资权限 敏感信息脱敏",
+    links: [
+      ["OrangeHRM", "https://www.orangehrm.com/"],
+      ["Odoo Employees", "https://www.odoo.com/app/employees"],
+      ["ERPNext HR", "https://erpnext.com/open-source-hr-payroll-software"]
+    ]
+  },
+  {
+    color: "green",
+    type: "订单支付",
+    title: "Saleor / Medusa / Magento Open Source",
+    description: "适合练购物车、订单状态、优惠、支付回调、退款、库存扣减、流水和财务对账。",
+    keywords: "订单支付 Saleor Medusa Magento Open Source 购物车 订单状态 优惠 支付回调 退款 库存扣减 流水 财务对账",
+    links: [
+      ["Saleor", "https://saleor.io/"],
+      ["Medusa", "https://medusajs.com/"],
+      ["Magento", "https://business.adobe.com/products/magento/open-source.html"]
+    ]
+  },
+  {
+    color: "violet",
+    type: "TMS 物流",
+    title: "Odoo Fleet / OpenBoxes / ERPNext Delivery",
+    description: "适合练运单、承运商、物流轨迹、签收、异常件、费用规则和订单/WMS 联动。",
+    keywords: "TMS 物流 Odoo Fleet OpenBoxes ERPNext Delivery 运单 承运商 物流轨迹 签收 异常件 费用规则 订单 WMS 联动",
+    links: [
+      ["Odoo Fleet", "https://www.odoo.com/app/fleet"],
+      ["OpenBoxes", "https://openboxes.com/"],
+      ["ERPNext", "https://erpnext.com/"]
+    ]
+  },
+  {
+    color: "blue",
+    type: "游戏测试",
+    title: "Godot / Unity Learn / Game Server Demo",
+    description: "适合练角色、背包、道具、充值、活动奖励、排行榜、弱网、多端登录和反作弊思维。",
+    keywords: "游戏测试 Godot Unity Learn PlayFab 角色 背包 道具 充值 活动奖励 排行榜 弱网 多端登录 反作弊",
+    links: [
+      ["Godot", "https://godotengine.org/"],
+      ["Unity Learn", "https://learn.unity.com/"],
+      ["PlayFab", "https://playfab.com/"]
+    ]
+  },
+  {
+    color: "yellow",
+    type: "银行金融",
+    title: "Apache Fineract / Mifos / Demo Bank",
+    description: "适合练账户、转账、余额、限额、验证码、风控、冲正、流水、对账和金额精度。",
+    keywords: "银行金融 Apache Fineract Mifos ParaBank 账户 转账 余额 限额 验证码 风控 冲正 流水 对账 金额精度",
+    links: [
+      ["Apache Fineract", "https://fineract.apache.org/"],
+      ["Mifos", "https://mifos.org/"],
+      ["ParaBank", "https://parabank.parasoft.com/"]
+    ]
+  }
+];
+
+function renderTrainingResourceCards(resourceMap) {
+  if (!resourceMap?.hasAttribute("data-render-resources")) {
+    return;
+  }
+
+  resourceMap.innerHTML = trainingResourceCards
+    .map((resource) => `
+      <article class="resource-card ${escapeHtml(resource.color)}" data-title="${escapeHtml(resource.keywords)}">
+        <span>${escapeHtml(resource.type)}</span>
+        <h3>${escapeHtml(resource.title)}</h3>
+        <p>${escapeHtml(resource.description)}</p>
+        <div class="resource-links">
+          ${resource.links.map(([label, href]) => `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`).join("")}
+        </div>
+      </article>
+    `)
+    .join("");
+}
+
+function setupTrainingResourceMap() {
+  const resourceMap = document.querySelector("[data-resource-map]");
+  if (!resourceMap || resourceMap.dataset.resourceReady === "true") {
+    return;
+  }
+
+  renderTrainingResourceCards(resourceMap);
+  resourceMap.dataset.resourceReady = "true";
+  const searchInput = document.querySelector("#resourceSearchInput");
+  const emptySearch = document.querySelector("[data-resource-empty]");
+  const endOfList = document.querySelector("[data-resource-end]");
+  const cards = Array.from(resourceMap.querySelectorAll("[data-title]"));
+  const updateEndMessage = setupListEndMessage(resourceMap, endOfList, cards.length);
+  setupListingSearch(resourceMap, searchInput, emptySearch, endOfList, updateEndMessage);
+}
+
+function formatActionLog(template, formData) {
+  return String(template || "已提交操作，请检查数据变化和预期结果。").replace(/\{(\w+)\}/g, (_, key) => formData[key] || "-");
+}
+
+function renderGenericTrainingTable(system) {
+  const table = document.querySelector("[data-training-records]");
+  if (!table) {
+    return;
+  }
+
+  const columns = system.columns || [];
+  const records = trainingInventory;
+  table.innerHTML = `
+    <div class="inventory-row inventory-row-head" style="grid-template-columns: repeat(${columns.length || 1}, minmax(120px, 1fr));">
+      ${columns.map((column) => `<span>${escapeHtml(column)}</span>`).join("")}
+    </div>
+    ${records
+      .map((record) => `
+        <div class="inventory-row" style="grid-template-columns: repeat(${columns.length || 1}, minmax(120px, 1fr));">
+          ${record.map((cell) => `<span>${escapeHtml(cell)}</span>`).join("")}
+        </div>
+      `)
+      .join("")}
+  `;
+}
+
+function generateTrainingCode(prefix = "QA") {
+  const now = new Date();
+  const date = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
+  const random = Math.floor(Math.random() * 9000 + 1000);
+  return `${prefix}-${date}-${random}`;
+}
+
+function renderTrainingField(field) {
+  const name = escapeHtml(field.name);
+  const value = escapeHtml(field.value || "");
+  const autoAttribute = field.autoGenerate ? ` data-auto-generate="${escapeHtml(field.autoGenerate)}"` : "";
+  const input = Array.isArray(field.options) && field.options.length
+    ? `<select name="${name}"${autoAttribute}>
+        ${field.options.map((option) => `<option value="${escapeHtml(option)}"${option === field.value ? " selected" : ""}>${escapeHtml(option)}</option>`).join("")}
+      </select>`
+    : `<input name="${name}" type="${escapeHtml(field.type || "text")}" value="${value}"${autoAttribute} />`;
+
+  const generateButton = field.autoGenerate
+    ? `<button class="mini-generate" type="button" data-generate-field="${name}">随机生成</button>`
+    : "";
+
+  return `
+    <label>${escapeHtml(field.label)}
+      <span class="field-control">${input}${generateButton}</span>
+    </label>
+  `;
+}
+
+function renderActionForm(action, index) {
+  return `
+    <div class="lab-view${index === 0 ? " active" : ""}" data-lab-view="${escapeHtml(action.id)}">
+      <h3>${escapeHtml(action.title)}</h3>
+      <form class="lab-form" data-training-action="${escapeHtml(action.id)}">
+        ${Array.isArray(action.presets) && action.presets.length ? `
+          <label>选择场景预设
+            <select name="__preset" data-action-preset>
+              ${action.presets.map((preset, presetIndex) => `<option value="${presetIndex}">${escapeHtml(preset.label || `预设 ${presetIndex + 1}`)}</option>`).join("")}
+              <option value="custom">其他 / 自主填写实际需求情况</option>
+            </select>
+          </label>
+        ` : ""}
+        ${(action.fields || []).map(renderTrainingField).join("")}
+        <button type="submit">${escapeHtml(action.button || "提交")}</button>
+      </form>
+      <p class="lab-tip">${escapeHtml(action.tip || "执行后记录结果，并思考是否符合预期。")}</p>
+    </div>
+  `;
+}
+
+function renderKnowledgeBox(system) {
+  const knowledge = system.knowledge || {};
+  const sections = [
+    { title: "岗位视角", items: knowledge.roleFocus ? [knowledge.roleFocus] : [] },
+    { title: "常见情况", items: knowledge.commonCases || [] },
+    { title: "行业常识", items: knowledge.industryKnowledge || [] },
+    { title: "核心术语", items: knowledge.terms || [] },
+    { title: "老手提醒", items: knowledge.seniorTips || [] },
+    { title: "拓展测试", items: knowledge.extensionTests || [] }
+  ].filter((section) => section.items.length);
+
+  if (!sections.length) {
+    return "";
+  }
+
+  return `
+    <div class="knowledge-box">
+      <strong>经验老手补给包</strong>
+      ${sections
+        .map((section) => `
+          <section>
+            <h3>${escapeHtml(section.title)}</h3>
+            <ul>${section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </section>
+        `)
+        .join("")}
+    </div>
+  `;
+}
+
+function renderCommonCaseLab(system) {
+  const cases = system.knowledge?.commonCases || [];
+  if (!cases.length) {
+    return "";
+  }
+
+  return `
+    <div class="lab-view" data-lab-view="common-cases">
+      <h3>常见情况演练</h3>
+      <form class="lab-form" data-common-case-form>
+        <label>选择常见情况
+          <select name="caseIndex" data-common-case-select>
+            ${cases.map((item, index) => `<option value="${index}">${escapeHtml(item.split("：")[0] || `常见情况 ${index + 1}`)}</option>`).join("")}
+            <option value="custom">其他 / 自主填写实际需求情况</option>
+          </select>
+        </label>
+        <label>情况说明
+          <textarea name="caseDetail" rows="6" data-common-case-detail>${escapeHtml(cases[0] || "")}</textarea>
+        </label>
+        <button type="submit">记录情况分析</button>
+      </form>
+      <p class="lab-tip">训练点：先选一个贴近真实项目的业务情况，再从地区、平台、币种、仓库、权限、接口、数据一致性角度拆测试点；如果没有匹配项，就写自己的实际需求。</p>
+    </div>
+  `;
+}
+
+function renderTrainingDetail(training) {
+  const detailRoot = document.querySelector("[data-training-detail]");
+  const system = getTrainingSystem(training);
+  if (!detailRoot || !system) {
+    return;
+  }
+
+  document.title = `CHILALA | ${system.name}`;
+  trainingInventory = (system.records || []).map((row) => [...row]);
+  trainingLog = [];
+
+  detailRoot.innerHTML = `
+    <section class="training-hero page-band">
+      <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="training.html">返回上一页</button>
+      <div class="section-title">
+        <p class="eyebrow">${escapeHtml(system.badge || "QA PRACTICE")}</p>
+        <h1>${escapeHtml(system.name)}</h1>
+        <p>${escapeHtml(system.description)}</p>
+      </div>
+    </section>
+    <section class="training-workbench page-band">
+      <div class="training-layout">
+        <aside class="training-panel">
+          <span class="panel-label">TODAY TASKS</span>
+          <h2>训练任务</h2>
+          <div class="task-list">
+            ${(system.tasks || []).map((task) => `
+              <article>
+                <span>${escapeHtml(task.number)}</span>
+                <div><strong>${escapeHtml(task.title)}</strong><p>${escapeHtml(task.description)}</p></div>
+              </article>
+            `).join("")}
+          </div>
+          <div class="known-bugs">
+            <strong>隐藏缺陷提示</strong>
+            <ul>${(system.knownBugs || []).map((bug) => `<li>${escapeHtml(bug)}</li>`).join("")}</ul>
+          </div>
+          <div class="known-bugs scenario-box">
+            <strong>检查清单</strong>
+            <ul>${(system.scenarios || []).map((scenario) => `<li>${escapeHtml(scenario)}</li>`).join("")}</ul>
+          </div>
+          ${renderKnowledgeBox(system)}
+        </aside>
+        <section class="wms-lab" aria-label="${escapeHtml(system.name)}练习系统">
+          <div class="lab-header">
+            <div><p class="eyebrow">PRACTICE SYSTEM</p><h2>${escapeHtml(system.name)}</h2></div>
+            <span class="lab-status">测试环境</span>
+          </div>
+          <div class="lab-tabs" role="tablist" aria-label="训练模块">
+            ${(system.actions || []).map((action, index) => `<button class="${index === 0 ? "active" : ""}" type="button" data-lab-tab="${escapeHtml(action.id)}">${escapeHtml(action.title)}</button>`).join("")}
+            ${system.knowledge?.commonCases?.length ? '<button type="button" data-lab-tab="common-cases">常见情况</button>' : ""}
+            <button type="button" data-lab-tab="records">数据表</button>
+            <button type="button" data-lab-tab="bug">缺陷提交</button>
+          </div>
+          ${(system.actions || []).map(renderActionForm).join("")}
+          ${renderCommonCaseLab(system)}
+          <div class="lab-view" data-lab-view="records">
+            <h3>业务数据表</h3>
+            <div class="inventory-table" data-training-records></div>
+          </div>
+          <div class="lab-view" data-lab-view="bug">
+            <h3>提交缺陷</h3>
+            <form class="lab-form" data-bug-form>
+              <label>缺陷标题<input name="title" placeholder="例如：库存为 0 后状态未更新" /></label>
+              <label>复现步骤<textarea name="steps" rows="4" placeholder="1. 进入某模块；2. 输入测试数据；3. 点击提交"></textarea></label>
+              <label>预期结果<textarea name="expected" rows="3" placeholder="写清楚应该出现什么结果"></textarea></label>
+              <button type="submit">提交缺陷记录</button>
+            </form>
+          </div>
+          <div class="lab-log">
+            <div class="log-head"><strong>测试执行记录</strong><button type="button" data-clear-log>清空记录</button></div>
+            <ol data-lab-log></ol>
+          </div>
+        </section>
+      </div>
+    </section>
+  `;
+
+  setupTrainingLab(system);
+  renderGenericTrainingTable(system);
+  addTrainingLog(`${system.name} 训练环境已启动。`, "info");
+}
+
+function renderTrainingContent(training) {
+  if (document.querySelector("[data-training-detail]")) {
+    renderTrainingDetail(training);
+    return;
+  }
+  renderTrainingOverview(training);
+  setupTrainingResourceMap();
+}
+
+function setupTrainingLab(system) {
+  document.querySelectorAll("[data-lab-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const tab = button.dataset.labTab;
+      document.querySelectorAll("[data-lab-tab]").forEach((item) => item.classList.toggle("active", item === button));
+      document.querySelectorAll("[data-lab-view]").forEach((view) => view.classList.toggle("active", view.dataset.labView === tab));
+      if (tab === "records") {
+        renderGenericTrainingTable(system);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-training-action]").forEach((form) => {
+    const action = (system.actions || []).find((item) => item.id === form.dataset.trainingAction);
+    form.querySelectorAll("[data-auto-generate]").forEach((field) => {
+      if (!field.value) {
+        field.value = generateTrainingCode(field.dataset.autoGenerate);
+      }
+    });
+
+    form.querySelectorAll("[data-generate-field]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = form.elements[button.dataset.generateField];
+        if (target) {
+          target.value = generateTrainingCode(target.dataset.autoGenerate);
+          addTrainingLog(`已生成编号：${target.value}`, "info");
+        }
+      });
+    });
+
+    form.querySelector("[data-action-preset]")?.addEventListener("change", (event) => {
+      const presetIndex = event.currentTarget.value;
+      if (presetIndex === "custom") {
+        addTrainingLog("已切换为自定义情况：请按实际需求填写字段。", "info");
+        return;
+      }
+      const preset = action?.presets?.[Number(presetIndex)];
+      Object.entries(preset?.values || {}).forEach(([key, value]) => {
+        if (form.elements[key]) {
+          form.elements[key].value = value;
+        }
+      });
+      form.querySelectorAll("[data-auto-generate]").forEach((field) => {
+        field.value = generateTrainingCode(field.dataset.autoGenerate);
+      });
+      addTrainingLog(`已套用场景预设：${preset?.label || "未命名预设"}。`, "info");
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = Object.fromEntries(new FormData(form).entries());
+      const emptyField = Object.entries(formData).find(([, value]) => String(value).trim() === "");
+      if (emptyField) {
+        addTrainingLog(`提交提醒：${emptyField[0]} 为空，请判断真实系统是否应阻止。`, "warning");
+      }
+      addTrainingLog(formatActionLog(action?.log, formData), "success");
+      renderGenericTrainingTable(system);
+    });
+  });
+
+  const commonCaseSelect = document.querySelector("[data-common-case-select]");
+  const commonCaseDetail = document.querySelector("[data-common-case-detail]");
+  const commonCases = system.knowledge?.commonCases || [];
+  commonCaseSelect?.addEventListener("change", () => {
+    if (!commonCaseDetail) {
+      return;
+    }
+    if (commonCaseSelect.value === "custom") {
+      commonCaseDetail.value = "";
+      commonCaseDetail.placeholder = "请填写当前项目的实际需求情况，例如：目标地区、平台、币种、仓库、结算方式、业务规则、测试风险。";
+      commonCaseDetail.focus();
+      return;
+    }
+    commonCaseDetail.value = commonCases[Number(commonCaseSelect.value)] || "";
+  });
+
+  document.querySelector("[data-common-case-form]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const detail = commonCaseDetail?.value.trim() || "";
+    if (!detail) {
+      addTrainingLog("常见情况记录失败：请选择常见情况，或填写实际需求情况。", "error");
+      return;
+    }
+    const label = commonCaseSelect?.value === "custom" ? "自定义情况" : "常见情况";
+    addTrainingLog(`${label}已记录：${detail} 下一步请拆分测试范围、关键风险和回归点。`, "success");
+  });
+
+  document.querySelector("[data-bug-form]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const title = form.elements.title.value.trim();
+    const steps = form.elements.steps.value.trim();
+    const expected = form.elements.expected.value.trim();
+    if (!title || !steps || !expected) {
+      addTrainingLog("缺陷提交失败：标题、复现步骤、预期结果都必须填写。", "error");
+      return;
+    }
+    addTrainingLog(`缺陷已记录：${title}。下一步请补充影响范围并做回归。`, "warning");
+    form.reset();
+  });
+
+  document.querySelector("[data-clear-log]")?.addEventListener("click", () => {
+    trainingLog = [];
+    document.querySelector("[data-lab-log]").innerHTML = "";
+  });
+}
+
 const defaultToolboxData = {
   eyebrow: "QA TOOLBOX",
   titleHtml: '测试 <span class="highlight yellow">工具箱</span>',
@@ -654,6 +1313,13 @@ async function initManagedContent() {
   }
 
   try {
+    const trainingData = await loadJsonFile("data/training.json");
+    renderTrainingContent(trainingData);
+  } catch (error) {
+    renderTrainingContent(defaultTrainingData);
+  }
+
+  try {
     const customPagesData = await loadJsonFile("data/custom-pages.json");
     renderCustomPage(customPagesData);
   } catch (error) {
@@ -672,6 +1338,18 @@ if (backButton) {
     window.location.href = backButton.dataset.backFallback || "articles.html";
   });
 }
+
+document.addEventListener("click", (event) => {
+  const dynamicBackButton = event.target.closest("[data-back-button]");
+  if (!dynamicBackButton || dynamicBackButton === backButton) {
+    return;
+  }
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+  window.location.href = dynamicBackButton.dataset.backFallback || "training.html";
+});
 
 const defaultArticleData = {
   "ai-testing-efficiency": {

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 全部练习资源</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link active" href="training.html">测试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="training-hero page-band">
+        <div class="article-back-action">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="training.html">返回上一页</button>
+        </div>
+        <div class="section-title">
+          <p class="eyebrow">ALL PRACTICE RESOURCES</p>
+          <h1>全部 <span class="highlight coral">练习资源</span></h1>
+          <p>输入资源类型、系统名或测试关键词，快速找到适合小白真实练习的开源系统和 Demo。</p>
+        </div>
+        <form class="article-search resource-search" role="search">
+          <input type="search" id="resourceSearchInput" placeholder="按资源搜索，例如：银行 / 游戏 / CRM" aria-label="按资源搜索" />
+        </form>
+      </section>
+
+      <section class="training-resource-section page-band">
+        <div class="resource-map" data-resource-map data-render-resources></div>
+        <p class="end-of-list" data-resource-end>已全部显示，暂无更多内容了</p>
+        <p class="empty-search" data-resource-empty hidden>没有找到对应内容。</p>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a class="active" href="training.html">测试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 全部练习资源</p>
+    </footer>
+    <script src="script.js?v=4"></script>
+  </body>
+</html>

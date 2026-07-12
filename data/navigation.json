@@ -17,7 +17,9 @@
     {
       "label": "项目经验",
       "href": "projects.html",
-      "matches": ["projects-all.html"],
+      "matches": [
+        "projects-all.html"
+      ],
       "requirePassword": true,
       "password": "979797",
       "visible": true
@@ -25,7 +27,32 @@
     {
       "label": "测试工具箱",
       "href": "toolbox.html",
-      "matches": ["toolbox-all.html"],
+      "matches": [
+        "toolbox-all.html"
+      ],
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
+      "label": "测试训练",
+      "href": "training.html",
+      "matches": [
+        "training-all.html",
+        "training-resources-all.html",
+        "training-wms.html",
+        "training-mes.html",
+        "training-ecommerce.html",
+        "training-finance.html",
+        "training-forum.html",
+        "training-crm.html",
+        "training-oa.html",
+        "training-hr.html",
+        "training-orderpay.html",
+        "training-tms.html",
+        "training-game.html",
+        "training-bank.html"
+      ],
       "requirePassword": false,
       "password": "",
       "visible": true
@@ -33,7 +60,10 @@
     {
       "label": "文章",
       "href": "articles.html",
-      "matches": ["articles-all.html", "article-detail.html"],
+      "matches": [
+        "articles-all.html",
+        "article-detail.html"
+      ],
       "requirePassword": false,
       "password": "",
       "visible": true
