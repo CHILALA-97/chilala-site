@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 测试面试刷题模拟</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">INTERVIEW SIMULATOR</p>
+          <h1>测试面试 <span class="highlight blue">刷题模拟</span></h1>
+          <p>把刷题和上机分开练：先用题库补基础，再用项目场景检验真实测试思路。</p>
+        </div>
+      </section>
+
+      <section class="interview-section page-band" aria-labelledby="simulator-title">
+        <div class="section-title compact-title">
+          <p class="eyebrow">PRACTICE ENTRY</p>
+          <h2 id="simulator-title">选择你的 <span class="highlight yellow">练习模式</span></h2>
+          <p>刷题模式适合日常巩固，上机检验适合模拟真实面试项目追问。</p>
+        </div>
+        <div class="interview-simulator-grid">
+          <article class="practice-stage-card">
+            <span>01</span>
+            <h3>测试面试刷题模式</h3>
+            <p>按完整模拟、一面基础、二面项目、三面综合刷题，提交后显示百分制评分、正确答案和解析。</p>
+            <ul>
+              <li>测试基础、工具平台、SQL、Linux、Java 基础</li>
+              <li>WMS、MES、跨境、财务、论坛 APP 项目题</li>
+              <li>适合日常反复刷题，补概念和表达短板</li>
+            </ul>
+            <div class="round-card-actions">
+              <a href="interview-quiz.html">进入刷题模式</a>
+            </div>
+          </article>
+          <article class="practice-stage-card coral">
+            <span>02</span>
+            <h3>上机面试实操检验</h3>
+            <p>选择一个真实项目场景，按需求评审、用例设计、接口验证、数据库校验、缺陷闭环做完整自评。</p>
+            <ul>
+              <li>项目场景自动同步测试训练系统</li>
+              <li>按真实测试流程勾选执行动作</li>
+              <li>计算上机分并提示短板</li>
+            </ul>
+            <div class="round-card-actions">
+              <a href="interview-machine.html">进入上机检验</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 测试面试刷题模拟</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

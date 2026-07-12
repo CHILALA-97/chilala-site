@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 测试面试刷题模式</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">QUESTION BANK</p>
+          <h1>测试面试 <span class="highlight yellow">刷题模式</span></h1>
+          <p>一次模拟保持 50 到 100 题，系统会根据测试训练里的项目自动扩展题库。提交后显示百分制评分、正确答案和解析。</p>
+        </div>
+      </section>
+
+      <section class="interview-section page-band" aria-labelledby="quiz-title">
+        <div class="interview-exam-shell">
+          <div class="exam-intro">
+            <p class="eyebrow">QUESTION BANK</p>
+            <h2 id="quiz-title">测试面试 <span class="highlight yellow">刷题模式</span></h2>
+            <p>按完整模拟、一面基础、二面项目、三面综合切换题库。建议每轮 80 分以上再进入下一阶段。</p>
+            <div class="score-board" data-quiz-score>未作答</div>
+          </div>
+          <div class="quiz-mode-tabs" aria-label="面试刷题模式">
+            <button class="active" type="button" data-quiz-round="all">完整模拟</button>
+            <button type="button" data-quiz-round="first">一面基础</button>
+            <button type="button" data-quiz-round="second">二面项目</button>
+            <button type="button" data-quiz-round="third">三面综合</button>
+          </div>
+          <p class="quiz-progress" data-quiz-progress>题库准备中</p>
+          <div class="quiz-list" data-interview-quiz></div>
+          <div class="quiz-actions">
+            <button class="button" type="button" data-quiz-submit>提交评分</button>
+            <button class="button secondary" type="button" data-quiz-reset>重新练习</button>
+            <a class="button secondary" href="interview-machine.html">进入上机检验</a>
+            <a class="button secondary" href="interview.html">回到面试训练</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 测试面试刷题模式</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

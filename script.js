@@ -537,6 +537,7 @@ const defaultTrainingData = {
 
 let trainingInventory = [];
 let trainingLog = [];
+let currentTrainingData = defaultTrainingData;
 
 function getInventoryStatus(stock) {
   if (stock <= 0) {
@@ -802,32 +803,51 @@ const trainingResourceCards = [
   }
 ];
 
-function renderTrainingResourceCards(resourceMap) {
+function getAutoTrainingResourceCards(training) {
+  const systems = Array.isArray(training?.systems) ? training.systems : [];
+  const existingText = trainingResourceCards.map((resource) => `${resource.type} ${resource.keywords}`).join(" ").toLowerCase();
+  return systems
+    .filter((system) => {
+      const keyText = [system.slug, system.name, system.badge].join(" ").toLowerCase();
+      return keyText && !existingText.includes(keyText);
+    })
+    .map((system, index) => ({
+      color: ["blue", "yellow", "coral", "green", "violet"][index % 5],
+      type: system.badge || system.name || "新增系统",
+      title: `${system.name || "新增测试系统"} 练习资源`,
+      description: `适合练${(system.modules || ["需求评审", "功能测试", "接口测试", "数据校验", "缺陷闭环"]).join("、")}，可按训练页任务继续补充真实练习平台或项目资料。`,
+      keywords: [system.name, system.badge, system.description, ...(system.modules || []), ...(system.tasks || []).map((task) => `${task.title} ${task.description}`)].join(" "),
+      links: system.link ? [["进入本地练习", system.link]] : []
+    }));
+}
+
+function renderTrainingResourceCards(resourceMap, training = currentTrainingData) {
   if (!resourceMap?.hasAttribute("data-render-resources")) {
     return;
   }
 
-  resourceMap.innerHTML = trainingResourceCards
+  const resources = [...trainingResourceCards, ...getAutoTrainingResourceCards(training)];
+  resourceMap.innerHTML = resources
     .map((resource) => `
       <article class="resource-card ${escapeHtml(resource.color)}" data-title="${escapeHtml(resource.keywords)}">
         <span>${escapeHtml(resource.type)}</span>
         <h3>${escapeHtml(resource.title)}</h3>
         <p>${escapeHtml(resource.description)}</p>
         <div class="resource-links">
-          ${resource.links.map(([label, href]) => `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`).join("")}
+          ${(resource.links || []).map(([label, href]) => `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`).join("")}
         </div>
       </article>
     `)
     .join("");
 }
 
-function setupTrainingResourceMap() {
+function setupTrainingResourceMap(training = currentTrainingData) {
   const resourceMap = document.querySelector("[data-resource-map]");
   if (!resourceMap || resourceMap.dataset.resourceReady === "true") {
     return;
   }
 
-  renderTrainingResourceCards(resourceMap);
+  renderTrainingResourceCards(resourceMap, training);
   resourceMap.dataset.resourceReady = "true";
   const searchInput = document.querySelector("#resourceSearchInput");
   const emptySearch = document.querySelector("[data-resource-empty]");
@@ -1052,12 +1072,15 @@ function renderTrainingDetail(training) {
 }
 
 function renderTrainingContent(training) {
+  currentTrainingData = training || defaultTrainingData;
   if (document.querySelector("[data-training-detail]")) {
-    renderTrainingDetail(training);
+    renderTrainingDetail(currentTrainingData);
+    setupInterviewTraining(currentTrainingData);
     return;
   }
-  renderTrainingOverview(training);
-  setupTrainingResourceMap();
+  renderTrainingOverview(currentTrainingData);
+  setupTrainingResourceMap(currentTrainingData);
+  setupInterviewTraining(currentTrainingData);
 }
 
 function setupTrainingLab(system) {
@@ -1619,6 +1642,23 @@ function setupListingTools(list, searchInput, emptySearch, endOfList) {
   setupListingSearch(list, searchInput, emptySearch, endOfList, updateEndMessage);
 }
 
+function setupInterviewListingPages() {
+  document.querySelectorAll("[data-interview-listing]").forEach((list) => {
+    const section = list.closest("[data-interview-listing-section]") || document;
+    list.querySelectorAll(":scope > *").forEach((item) => {
+      if (!item.dataset.title) {
+        item.dataset.title = item.textContent.replace(/\s+/g, " ").trim();
+      }
+    });
+    setupListingTools(
+      list,
+      section.querySelector("[data-interview-search]"),
+      section.querySelector("[data-interview-empty]"),
+      section.querySelector("[data-interview-end]")
+    );
+  });
+}
+
 function renderArticleDetail() {
   const articleDetail = document.querySelector("[data-article-detail]");
 
@@ -1674,6 +1714,904 @@ function renderArticleBody(article) {
   }
 }
 
+const interviewQuizQuestions = [
+  {
+    category: "测试基础",
+    question: "需求评审阶段，测试人员最应该优先确认什么？",
+    options: ["页面颜色是否好看", "业务规则、角色权限、主流程、异常流和验收标准", "开发什么时候下班"],
+    answer: 1,
+    explanation: "需求评审不是听需求，而是提前发现歧义、缺口和风险。主流程、异常流、权限、数据来源、验收标准必须先确认。"
+  },
+  {
+    category: "测试环境",
+    question: "测试环境准备时，以下哪项最容易导致“误报 Bug”？",
+    options: ["测试账号权限不完整或基础数据不一致", "测试用例写得太详细", "截图太清晰"],
+    answer: 0,
+    explanation: "账号权限、配置、基础数据、接口地址不一致，很容易让环境问题伪装成业务缺陷，所以执行前要先做环境冒烟。"
+  },
+  {
+    category: "用例设计",
+    question: "金额输入框最需要覆盖哪类边界？",
+    options: ["最小值、最大值、超限、小数精度、负数、空值和非法字符", "只测 100 元", "只测页面是否显示"],
+    answer: 0,
+    explanation: "金额字段属于高风险字段，尤其要关注精度、边界、非法输入和数据落库，财务、订单、银行类系统都很常问。"
+  },
+  {
+    category: "接口测试",
+    question: "订单发货接口重复提交时，最应该验证什么？",
+    options: ["按钮颜色", "是否重复扣库存、重复生成单据或状态错乱", "浏览器窗口大小"],
+    answer: 1,
+    explanation: "重复提交对应接口幂等风险。WMS、订单、支付、财务场景都要关注重复请求造成的数据不一致。"
+  },
+  {
+    category: "数据库",
+    question: "接口返回成功后，为什么还要查数据库？",
+    options: ["确认数据是否正确落库、状态是否流转、关联表是否一致", "为了显得很忙", "查数据库和测试无关"],
+    answer: 0,
+    explanation: "接口成功不代表业务成功。测试要验证前端、接口返回、数据库、上下游同步是否一致。"
+  },
+  {
+    category: "Linux",
+    question: "接口报 500，测试人员排查时最贴近真实工作的动作是？",
+    options: ["直接说开发写错了", "保留请求参数、响应、账号数据，并协助查看服务日志和异常栈", "刷新浏览器就结束"],
+    answer: 1,
+    explanation: "专业表达是证据链：请求、响应、环境、账号、数据库、日志。这样开发更容易复现和定位。"
+  },
+  {
+    category: "Java 理解",
+    question: "测试人员理解 Java 异常和日志，主要价值是什么？",
+    options: ["替代开发写业务代码", "看懂报错、定位接口问题、提升缺陷沟通效率", "和测试完全无关"],
+    answer: 1,
+    explanation: "测试不一定要做开发，但懂异常、对象、集合、JSON、HTTP、日志，会明显提高接口和缺陷定位能力。"
+  },
+  {
+    category: "WMS 业务",
+    question: "WMS 出库测试最核心的数据风险是什么？",
+    options: ["库存扣减、库位库存、单据状态和外部系统同步不一致", "页面标题太长", "按钮圆角不统一"],
+    answer: 0,
+    explanation: "仓储系统的核心是账实一致。出库链路要看库存、库位、波次、拣货、发货、ERP/TMS 同步。"
+  },
+  {
+    category: "跨境电商",
+    question: "跨境商品服务系统测试，多币种场景最容易漏测什么？",
+    options: ["汇率换算、展示币/结算币、精度舍入、平台同步差异", "商品图片好不好看", "登录按钮大小"],
+    answer: 0,
+    explanation: "跨境业务常涉及美元、当地币、平台币种、海外仓和结算规则，金额精度和汇率来源是高频风险。"
+  },
+  {
+    category: "上线验收",
+    question: "上线前测试报告里最应该写清楚什么？",
+    options: ["测试范围、通过情况、缺陷状态、遗留风险和上线建议", "今天心情", "电脑型号"],
+    answer: 0,
+    explanation: "测试报告不是流水账，而是给团队判断是否可上线的质量依据。"
+  }
+];
+
+const interviewScenarioCases = {
+  wms: {
+    title: "WMS 仓储供应链系统",
+    prompt: "需求：新增“发货订单生成拣货单”接口，并同步 TMS。请模拟一次上机测试表达。",
+    context: "重点关注库存扣减、库位库存、单据状态、重复提交、PDA 请求、ERP/TMS/MES 数据一致性。",
+    points: [
+      "先确认需求规则：发货订单状态、库存占用、拣货单生成条件和失败回滚规则。",
+      "准备测试数据：商品、批次、库位、库存数量、发货订单、承运商和外部系统配置。",
+      "设计主流程用例：正常生成拣货单、PDA 拣货、发货完成、TMS 同步成功。",
+      "设计异常流用例：库存不足、库位不可用、重复提交、外部接口超时、部分同步失败。",
+      "使用 JMeter 或 Postman 执行接口测试，检查参数、返回码、幂等和响应时间。",
+      "使用 MySQL/Navicat 验证库存、单据状态、接口日志和同步记录。",
+      "发现缺陷后提交复现步骤、请求响应、数据库前后变化和影响范围。",
+      "回归时验证缺陷修复，同时关注是否引入库存错扣或状态错乱新问题。"
+    ]
+  },
+  mes: {
+    title: "MES 打版生产系统",
+    prompt: "需求：工单下发后支持工序报工和异常处理。请说明你如何测试。",
+    context: "重点关注 BOM、工艺路线、派工、报工、在制品状态、ERP 工单同步和现场 UAT 反馈。",
+    points: [
+      "确认工艺路线、BOM、工序顺序、报工权限、异常类型和完工入库规则。",
+      "准备工单、物料、工位、人员、设备、工序和半成品状态数据。",
+      "覆盖正常生产链路：工单下发、派工、首工序开工、报工、末工序完工。",
+      "覆盖异常场景：跳工序报工、重复报工、报工数量超工单、异常暂停和返工。",
+      "验证 MES 与 ERP 接口同步：工单状态、物料消耗、完工数量和异常数据。",
+      "做浏览器兼容和现场 UAT 支持，记录现场反馈并转成可复现缺陷。",
+      "用数据库核对工单、工序、报工明细和库存变更是否一致。",
+      "输出回归范围和测试报告，说明高风险模块是否已验证。"
+    ]
+  },
+  ecommerce: {
+    title: "跨境电商商品服务系统",
+    prompt: "需求：商品中心新增多规格 SKU 并同步 Shopee/Amazon。请做测试分析。",
+    context: "重点关注平台差异、展示币/结算币、汇率、海外仓、本地仓、SKU 映射和同步失败重试。",
+    points: [
+      "确认平台规则：Shopee、Amazon、独立站字段差异、必填项、类目和图片限制。",
+      "确认币种规则：展示币、结算币、汇率来源、精度舍入和美元统一结算场景。",
+      "准备商品、SPU、SKU、规格、库存、价格、仓库和平台账号测试数据。",
+      "覆盖主流程：商品创建、多规格维护、上架、平台同步、价格库存同步。",
+      "覆盖异常流：部分 SKU 同步失败、汇率为空、仓库不匹配、平台字段超长。",
+      "验证数据库商品主表、SKU 表、同步日志、平台映射表和失败重试记录。",
+      "使用 Fiddler/Postman/JMeter 验证接口参数、返回、重试和并发同步稳定性。",
+      "输出测试风险：平台规则变动、多币种精度、同步延迟、海外仓库存不一致。"
+    ]
+  },
+  finance: {
+    title: "财务管理系统",
+    prompt: "需求：新增费用报销审批和付款统计报表。请说明测试重点。",
+    context: "重点关注金额精度、审批流、角色权限、汇总统计、导出、财务数据准确性和审计日志。",
+    points: [
+      "确认费用类型、审批层级、付款状态、报表口径和金额精度规则。",
+      "准备申请人、审批人、财务、部门、费用科目和多状态单据数据。",
+      "覆盖主流程：提交报销、审批通过、财务付款、报表统计和导出。",
+      "覆盖异常流：驳回、撤回、重复提交、超额、附件缺失、无权限审批。",
+      "验证金额小数、合计、筛选条件、日期范围和跨部门权限隔离。",
+      "使用 SQL 核对明细表、审批表、付款表、报表统计口径是否一致。",
+      "关注审计日志：谁在什么时候改了什么状态，是否可追踪。",
+      "回归时重点看旧报表、旧审批流和权限是否受新需求影响。"
+    ]
+  },
+  forum: {
+    title: "论坛 APP 项目",
+    prompt: "需求：新增帖子评论点赞和弱网重试。请模拟测试方案。",
+    context: "重点关注移动端兼容、网络切换、弱网、重复点赞、内容审核、消息通知和服务端数据一致性。",
+    points: [
+      "确认评论、点赞、取消点赞、通知、审核和弱网重试的业务规则。",
+      "准备多账号、帖子、评论、敏感词、不同网络和不同机型数据。",
+      "覆盖主流程：发布帖子、评论、点赞、取消点赞、消息通知。",
+      "覆盖异常流：重复点击、弱网断网、切后台、登录失效、内容被审核拦截。",
+      "使用 Fiddler 抓包分析客户端请求、重试次数和服务端返回。",
+      "使用 ADB/真机做兼容、安装升级、网络切换和 Monkey 稳定性测试。",
+      "验证数据库评论数、点赞数、通知记录和用户状态是否一致。",
+      "输出专项报告：兼容机型、弱网表现、稳定性问题和遗留风险。"
+    ]
+  }
+};
+
+function buildGenericInterviewScenario(system) {
+  const modules = system.modules || [];
+  const tasks = system.tasks || [];
+  const knowledge = system.knowledge || {};
+  const commonCases = knowledge.commonCases || [];
+  const title = system.name || "新增测试系统";
+  const moduleText = modules.length ? modules.join("、") : "核心模块、接口、权限、数据和回归范围";
+  const taskPoints = tasks.slice(0, 3).map((task) => `${task.title}：${task.description}`);
+  const commonPoints = commonCases.slice(0, 2).map((item) => `结合常见业务情况分析：${item}`);
+
+  return {
+    title,
+    prompt: `需求：${title} 新增或调整核心业务流程。请按真实测试工作说明你的测试方案。`,
+    context: `重点关注 ${moduleText}，并结合需求评审、测试环境、测试数据、接口数据一致性、缺陷跟踪和回归验收来表达。`,
+    points: [
+      `先确认需求范围：${moduleText} 的业务规则、角色权限、状态流转和验收标准。`,
+      "准备测试环境：版本包、配置、账号权限、基础数据、第三方接口地址、日志和数据库访问。",
+      "拆主流程和异常流：至少覆盖正常路径、边界值、重复提交、权限不足、接口失败和数据回滚。",
+      ...taskPoints,
+      ...commonPoints,
+      "使用接口工具验证请求参数、返回结果、幂等、异常提示和响应时间。",
+      "使用数据库验证关键表状态、关联数据、操作日志、同步记录和报表口径。",
+      "提交缺陷时补齐复现步骤、账号数据、截图录屏、接口请求响应、数据库前后变化和影响范围。",
+      "回归测试时验证缺陷是否修复，并关注相关模块是否产生新问题。",
+      "最后输出测试报告：测试范围、通过情况、缺陷状态、遗留风险和上线建议。"
+    ].slice(0, 10)
+  };
+}
+
+function getInterviewScenarioCases(training = currentTrainingData) {
+  const dynamicCases = {};
+  (training?.systems || []).forEach((system) => {
+    const key = system.slug || system.name;
+    if (!key) {
+      return;
+    }
+    dynamicCases[key] = interviewScenarioCases[key] || buildGenericInterviewScenario(system);
+  });
+  return { ...interviewScenarioCases, ...dynamicCases };
+}
+
+function getInterviewQuestionRound(question) {
+  if (question.round) {
+    return question.round;
+  }
+  if (/(WMS|MES|跨境|财务|APP|业务|项目)/i.test(question.category)) {
+    return "second";
+  }
+  if (/(上线|规划|沟通|反问|风险)/.test(question.category)) {
+    return "third";
+  }
+  return "first";
+}
+
+const interviewFoundationQuestions = [
+  ["测试基础", "黑盒测试常用方法不包括哪一项？", ["等价类", "边界值", "代码覆盖率统计"], 2, "代码覆盖率更偏白盒或自动化统计，黑盒常用等价类、边界值、判定表、场景法、错误推测。", "first"],
+  ["测试基础", "冒烟测试的核心目的是什么？", ["验证版本是否具备继续测试条件", "把所有用例都跑完", "只测页面颜色"], 0, "冒烟测试先看主流程是否可用，避免版本不可测导致大量无效执行。", "first"],
+  ["测试基础", "回归测试应该优先覆盖什么？", ["改动模块、关联模块、历史高频缺陷和核心主流程", "随机点几个页面", "只看新需求"], 0, "回归不是全部重测，而是围绕改动影响面和核心风险做优先级。", "first"],
+  ["测试基础", "缺陷严重程度通常看什么？", ["对业务、数据、用户、上线风险的影响", "开发是否忙", "测试是否喜欢这个功能"], 0, "严重程度由影响范围和业务损失决定，优先级由修复紧急程度决定。", "first"],
+  ["测试环境", "测试前发现接口地址还是开发本机地址，应该怎么处理？", ["先确认配置并阻止继续误测", "继续执行所有用例", "直接上线"], 0, "环境配置错误会污染测试结论，必须先确认环境再执行。", "first"],
+  ["测试环境", "测试账号权限不完整，最可能导致什么问题？", ["把权限配置问题误判成功能缺陷", "提升测试效率", "自动修复 Bug"], 0, "账号、角色、菜单、数据权限是环境准备重点。", "first"],
+  ["用例设计", "状态流转类需求最适合先画什么？", ["状态机或流程图", "个人头像", "颜色表"], 0, "订单、工单、审批、出入库都需要先梳理状态流转。", "first"],
+  ["用例设计", "权限测试至少要覆盖什么？", ["无权限、有权限、越权、数据隔离", "只测管理员", "只测按钮是否存在"], 0, "权限不仅是菜单，还包括接口、数据范围和操作权限。", "first"],
+  ["接口测试", "接口测试里 Token 过期应该验证什么？", ["返回码、错误提示、是否允许继续访问敏感数据", "页面字体", "电脑电量"], 0, "认证失效属于安全和权限风险。", "first"],
+  ["接口测试", "接口幂等主要防什么？", ["重复请求导致重复扣款、重复扣库存、重复生成单据", "用户换头像", "页面滚动"], 0, "订单、支付、库存、财务接口都要特别关注幂等。", "first"],
+  ["数据库", "查询订单及明细常见会用到什么 SQL 能力？", ["join 关联查询", "只会刷新页面", "只会截图"], 0, "主表和明细表、状态表、日志表经常需要关联验证。", "first"],
+  ["数据库", "生产环境数据问题排查时，测试人员最应该注意什么？", ["只读优先、谨慎操作、保留证据、不要随意改数", "随便 update", "删除重建"], 0, "线上数据高风险，测试要有安全边界和审计意识。", "first"],
+  ["Linux", "查看实时日志常用命令是哪一个？", ["tail -f", "paint", "rename"], 0, "tail -f 常用于实时观察服务日志，再配合 grep 搜关键字。", "first"],
+  ["Linux", "排查接口超时时，除了接口响应还要关注什么？", ["服务日志、数据库慢查询、网络、第三方依赖", "桌面壁纸", "浏览器主题"], 0, "超时可能来自服务、数据库、网络、缓存或外部接口。", "first"],
+  ["Java 理解", "NullPointerException 常说明什么？", ["对象为空却被调用", "网络一定断了", "浏览器版本太新"], 0, "测试看到空指针异常时，可以结合入参、日志和数据为空场景协助定位。", "first"],
+  ["Java 理解", "接口返回 JSON 字段缺失，测试应该优先确认什么？", ["接口文档、实际返回、前端依赖字段和兼容影响", "屏幕亮度", "键盘布局"], 0, "字段缺失可能影响前端展示、下游解析和旧版本兼容。", "first"],
+  ["性能测试", "性能测试前为什么要明确业务模型？", ["不同接口访问比例和数据量会影响压测真实性", "为了写更多字", "为了换浏览器"], 0, "性能测试不是盲压，要接近真实业务访问比例。", "first"],
+  ["性能测试", "压测发现错误率升高，应优先查看什么？", ["错误响应、服务日志、资源监控和瓶颈点", "网页背景", "鼠标速度"], 0, "错误率上升要结合接口返回、日志、CPU、内存、数据库等定位。", "first"],
+  ["三面综合", "面试被问到不会的问题，比较稳妥的回答是？", ["承认不熟，但说明自己的排查思路和学习补齐方式", "乱编一个答案", "直接沉默"], 0, "真实可靠比硬编更重要，三面尤其看沟通和稳定性。", "third"],
+  ["三面综合", "反问面试官时，最适合问什么？", ["团队测试流程、岗位重点、系统复杂度和质量建设现状", "公司八卦", "面试官年龄"], 0, "反问要体现你关注岗位匹配和质量交付。", "third"]
+].map(([category, question, options, answer, explanation, round]) => ({ category, question, options, answer, explanation, round }));
+
+function buildSystemInterviewQuestions(system) {
+  const name = system.name || "新增测试系统";
+  const modules = system.modules?.length ? system.modules.join("、") : "核心模块";
+  const firstTask = system.tasks?.[0]?.title || "需求评审";
+  const firstTaskDescription = system.tasks?.[0]?.description || "确认业务规则、角色权限、主流程、异常流和验收标准";
+  const secondTask = system.tasks?.[1]?.title || "主流程测试";
+  const knowledge = system.knowledge || {};
+  const commonCase = knowledge.commonCases?.[0] || `${name} 常见情况需要结合业务规则、接口和数据库一起判断。`;
+
+  return [
+    {
+      category: `${name} 项目`,
+      question: `面试官问你 ${name} 怎么做需求评审，最应该先讲什么？`,
+      options: [`围绕${modules}确认规则、权限、主流程、异常流和验收标准`, "先说页面好不好看", "只说自己执行过测试"],
+      answer: 0,
+      explanation: `${firstTask} 要落到业务规则和风险识别。可以补充：${firstTaskDescription}`,
+      round: "second"
+    },
+    {
+      category: `${name} 项目`,
+      question: `${name} 做测试数据准备时，最合理的做法是？`,
+      options: ["按角色、状态、边界、异常和关联数据准备", "只准备一个默认账号", "完全依赖线上数据"],
+      answer: 0,
+      explanation: "测试数据要覆盖主流程和异常流，还要能支撑接口、数据库和回归验证。",
+      round: "second"
+    },
+    {
+      category: `${name} 项目`,
+      question: `${secondTask} 执行时，除了页面成功，还要验证什么？`,
+      options: ["接口返回、数据库落库、状态流转、日志和上下游同步", "只看按钮变色", "只看截图清晰"],
+      answer: 0,
+      explanation: "真实项目测试要形成证据链：前端、接口、数据库、日志、上下游系统。",
+      round: "second"
+    },
+    {
+      category: `${name} 项目`,
+      question: `${name} 出现上线风险时，测试报告里最应该写清楚什么？`,
+      options: ["影响范围、复现条件、缺陷状态、回归情况和上线建议", "个人心情", "电脑配置"],
+      answer: 0,
+      explanation: "上线报告的价值是帮助团队判断风险是否可接受。",
+      round: "third"
+    },
+    {
+      category: `${name} 行业常识`,
+      question: `结合 ${name} 的常见业务情况，测试表达最应该体现什么？`,
+      options: [commonCase, "只说功能点，不谈业务", "只背定义，不举例"],
+      answer: 0,
+      explanation: "二面会深挖行业理解，回答要把业务规则、数据流和测试验证动作连起来。",
+      round: "second"
+    }
+  ];
+}
+
+function getInterviewQuestionBank(training = currentTrainingData, round = "all") {
+  const baseQuestions = interviewQuizQuestions.map((question) => ({
+    ...question,
+    round: getInterviewQuestionRound(question)
+  }));
+  const systemQuestions = (training?.systems || []).flatMap(buildSystemInterviewQuestions);
+  const bank = [...baseQuestions, ...interviewFoundationQuestions, ...systemQuestions];
+  const filtered = round === "all" ? bank : bank.filter((question) => question.round === round);
+  return filtered.slice(0, round === "all" ? 80 : 60);
+}
+
+function setupInterviewQuiz() {
+  const quizList = document.querySelector("[data-interview-quiz]");
+  if (!quizList) {
+    return;
+  }
+
+  const scoreBox = document.querySelector("[data-quiz-score]");
+  const progressBox = document.querySelector("[data-quiz-progress]");
+  const submitButton = document.querySelector("[data-quiz-submit]");
+  const resetButton = document.querySelector("[data-quiz-reset]");
+  const modeButtons = Array.from(document.querySelectorAll("[data-quiz-round]"));
+
+  const renderQuiz = () => {
+    const activeRound = quizList.dataset.activeRound || "all";
+    const questionBank = getInterviewQuestionBank(currentTrainingData, activeRound);
+    quizList.interviewQuestionBank = questionBank;
+    quizList.innerHTML = questionBank.map((item, index) => `
+      <article class="quiz-question" data-quiz-question="${index}">
+        <div class="quiz-question-head">
+          <span>${escapeHtml(item.category)}</span>
+          <b>${String(index + 1).padStart(2, "0")}</b>
+        </div>
+        <h3>${escapeHtml(item.question)}</h3>
+        <div class="quiz-options">
+          ${item.options.map((option, optionIndex) => `
+            <label>
+              <input type="radio" name="interview-question-${index}" value="${optionIndex}" />
+              <span>${escapeHtml(option)}</span>
+            </label>
+          `).join("")}
+        </div>
+        <p class="quiz-explanation" hidden>${escapeHtml(item.explanation)}</p>
+      </article>
+    `).join("");
+    if (scoreBox) {
+      scoreBox.textContent = "未作答";
+    }
+    if (progressBox) {
+      const roundName = { all: "完整模拟", first: "一面基础", second: "二面项目", third: "三面综合" }[activeRound] || "完整模拟";
+      progressBox.textContent = `${roundName}：本次 ${questionBank.length} 题，建议 80 分以上再进入下一轮。`;
+    }
+  };
+
+  renderQuiz();
+
+  if (quizList.dataset.ready === "true") {
+    return;
+  }
+  quizList.dataset.ready = "true";
+
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      modeButtons.forEach((item) => item.classList.toggle("active", item === button));
+      quizList.dataset.activeRound = button.dataset.quizRound || "all";
+      renderQuiz();
+    });
+  });
+
+  submitButton?.addEventListener("click", () => {
+    let rightCount = 0;
+    const questionCards = Array.from(quizList.querySelectorAll(".quiz-question"));
+    const questionBank = quizList.interviewQuestionBank || [];
+
+    questionCards.forEach((card, index) => {
+      const checked = card.querySelector("input:checked");
+      const selected = checked ? Number(checked.value) : -1;
+      const isRight = selected === questionBank[index].answer;
+      card.classList.remove("is-right", "is-wrong");
+      card.classList.add(isRight ? "is-right" : "is-wrong");
+      card.querySelectorAll("label").forEach((label, optionIndex) => {
+        label.classList.toggle("is-answer", optionIndex === questionBank[index].answer);
+      });
+      const explanation = card.querySelector(".quiz-explanation");
+      if (explanation) {
+        explanation.hidden = false;
+      }
+      if (isRight) {
+        rightCount += 1;
+      }
+    });
+
+    const score = questionCards.length ? Math.round((rightCount / questionCards.length) * 100) : 0;
+    const level = score >= 90 ? "优秀，可以进入项目深挖" : score >= 80 ? "通过，建议继续刷错题" : score >= 60 ? "基础不稳，先补流程和工具" : "需要重学测试基础";
+    if (scoreBox) {
+      scoreBox.textContent = `${score} 分 / 答对 ${rightCount}/${questionCards.length} / ${level}`;
+    }
+  });
+
+  resetButton?.addEventListener("click", renderQuiz);
+}
+
+function setupInterviewScenarioExam(training = currentTrainingData) {
+  const select = document.querySelector("[data-scenario-select]");
+  const caseBox = document.querySelector("[data-scenario-case]");
+  const checklist = document.querySelector("[data-scenario-checklist]");
+  const scoreButton = document.querySelector("[data-scenario-score]");
+  const resetButton = document.querySelector("[data-scenario-reset]");
+  const result = document.querySelector("[data-scenario-result]");
+
+  if (!select || !caseBox || !checklist) {
+    return;
+  }
+
+  const cases = getInterviewScenarioCases(training);
+  const currentValue = select.value;
+  select.innerHTML = Object.entries(cases)
+    .map(([key, scenario]) => `<option value="${escapeHtml(key)}">${escapeHtml(scenario.title)}</option>`)
+    .join("");
+  if (cases[currentValue]) {
+    select.value = currentValue;
+  }
+
+  const renderScenario = () => {
+    const latestCases = getInterviewScenarioCases(currentTrainingData);
+    const scenario = latestCases[select.value] || latestCases.wms || Object.values(latestCases)[0];
+    if (!scenario) {
+      return;
+    }
+    caseBox.innerHTML = `
+      <span class="round-badge">项目场景</span>
+      <h3>${escapeHtml(scenario.title)}</h3>
+      <p><strong>面试官：</strong>${escapeHtml(scenario.prompt)}</p>
+      <p><strong>业务提醒：</strong>${escapeHtml(scenario.context)}</p>
+    `;
+    checklist.innerHTML = scenario.points.map((point, index) => `
+      <label>
+        <input type="checkbox" value="${index}" />
+        <span>${escapeHtml(point)}</span>
+      </label>
+    `).join("");
+    if (result) {
+      result.textContent = "请选择场景并完成自评。";
+    }
+  };
+
+  if (select.dataset.ready !== "true") {
+    select.addEventListener("change", renderScenario);
+    select.dataset.ready = "true";
+  }
+  renderScenario();
+
+  scoreButton?.addEventListener("click", () => {
+    const total = checklist.querySelectorAll("input").length;
+    const checked = checklist.querySelectorAll("input:checked").length;
+    const score = total ? Math.round((checked / total) * 100) : 0;
+    let comment = "还需要补测试流程、数据校验和缺陷闭环。";
+    if (score >= 90) {
+      comment = "表达完整，具备独立负责项目测试的面试表现。";
+    } else if (score >= 75) {
+      comment = "整体过关，建议补充异常流、接口数据和上线风险表达。";
+    } else if (score >= 60) {
+      comment = "能讲主流程，但项目深度不足，需要补业务链路和证据链。";
+    }
+    if (result) {
+      result.textContent = `${score} 分：${comment}`;
+    }
+  });
+
+  resetButton?.addEventListener("click", renderScenario);
+}
+
+function renderInterviewExtendGrid(training = currentTrainingData) {
+  const extendGrid = document.querySelector("[data-interview-extend-grid]");
+  if (!extendGrid) {
+    return;
+  }
+
+  const baseCards = [
+    {
+      title: "按项目拓展",
+      description: "新增 WMS、MES、跨境、财务、论坛 APP、银行、游戏等项目专项问答。"
+    },
+    {
+      title: "按岗位拓展",
+      description: "区分初级测试、功能测试、接口测试、自动化测试、性能测试、测试组长。"
+    },
+    {
+      title: "按工具拓展",
+      description: "继续补 Postman、JMeter、Fiddler、MySQL、Linux、Git、Java 基础题。"
+    },
+    {
+      title: "按面试反馈拓展",
+      description: "每次真实面试后，把被问到的问题沉淀成“题目 + 答案 + 项目例子 + 避坑点”。"
+    }
+  ];
+
+  const systemCards = (training?.systems || []).map((system) => {
+    const modules = system.modules?.length ? system.modules.join("、") : "主流程、异常流、接口、数据和回归";
+    const taskTitle = system.tasks?.[0]?.title || "需求评审";
+    return {
+      title: `${system.name || "新增系统"} 面试专项`,
+      description: `围绕${modules}追问：${taskTitle}怎么做、测试数据怎么准备、接口和数据库怎么验证、缺陷如何闭环。`
+    };
+  });
+
+  extendGrid.innerHTML = [...baseCards, ...systemCards]
+    .map((card) => `
+      <article data-title="${escapeHtml([card.title, card.description].join(" "))}">
+        <h3>${escapeHtml(card.title)}</h3>
+        <p>${escapeHtml(card.description)}</p>
+      </article>
+    `)
+    .join("");
+  extendGrid.dataset.searchReady = "false";
+  setupInterviewListingPages();
+}
+
+function renderRoundPracticeBoard(training = currentTrainingData) {
+  const board = document.querySelector("[data-round-practice-board]");
+  if (!board) {
+    return;
+  }
+
+  const systems = training?.systems || [];
+  const systemLinks = systems
+    .map((system) => `<a href="${escapeHtml(system.link || "training.html")}">${escapeHtml(system.name || "新增系统")}</a>`)
+    .join("");
+
+  board.innerHTML = `
+    <article class="round-column blue">
+      <span>一面训练</span>
+      <h3>测试基础 + 工具能力</h3>
+      <p>重点刷测试流程、测试环境、用例设计、缺陷生命周期、SQL、Linux、接口测试、Java 基础理解。</p>
+      <ul>
+        <li>能不能讲清楚“从需求到上线”的测试工作流</li>
+        <li>能不能用项目例子解释测试方法</li>
+        <li>能不能用工具证明问题、定位问题</li>
+      </ul>
+      <div class="round-card-actions">
+        <a href="interview-practice.html?round=first&type=single">开始练习</a>
+        <a href="interview-practice.html?round=first&type=multi">刷题模式</a>
+      </div>
+    </article>
+    <article class="round-column coral">
+      <span>二面训练</span>
+      <h3>项目深挖 + 业务链路</h3>
+      <p>从测试训练系统里自动同步项目入口，用来练真实项目描述、业务风险、接口数据和缺陷闭环。</p>
+      <div class="system-chip-list">${systemLinks}</div>
+      <div class="round-card-actions">
+        <a href="interview-practice.html?round=second&type=single">开始练习</a>
+        <a href="interview-practice.html?round=second&type=multi">刷题模式</a>
+      </div>
+    </article>
+    <article class="round-column green">
+      <span>三面训练</span>
+      <h3>综合匹配 + 反问策略</h3>
+      <p>重点准备职业规划、稳定性、团队协作、上线风险处理、质量建设和面试者反问。</p>
+      <ul>
+        <li>用“经历 + 方法 + 结果”回答综合问题</li>
+        <li>反问团队流程、系统复杂度、自动化现状</li>
+        <li>避免夸大，保留真实可验证的表达</li>
+      </ul>
+      <div class="round-card-actions">
+        <a href="interview-practice.html?round=third&type=single">开始练习</a>
+        <a href="interview-practice.html?round=third&type=multi">刷题模式</a>
+      </div>
+    </article>
+  `;
+}
+
+const PRACTICE_MISTAKE_KEY = "chilala-interview-practice-mistakes";
+
+const interviewPracticeGeneralQuestions = [
+  { id: "sd-01", kind: "single", round: "first", category: "软件基础知识", question: "B/S 架构系统测试时，前端页面请求后端接口通常基于什么协议？", options: ["HTTP/HTTPS", "Bluetooth", "HDMI"], answer: 0, explanation: "Web 系统一般通过 HTTP/HTTPS 调用接口，测试时要关注请求方法、状态码、参数、响应和鉴权。" },
+  { id: "sd-02", kind: "single", round: "first", category: "软件基础知识", question: "客户端提示成功但数据库没有数据，最优先怀疑哪类问题？", options: ["页面颜色", "接口或事务提交异常", "键盘坏了"], answer: 1, explanation: "前端成功不等于业务成功，要核对接口返回、服务日志、事务提交和数据库落库。" },
+  { id: "sd-03", kind: "fill", round: "first", category: "软件基础知识", question: "常见 Web 请求方法中，查询数据通常使用 ___，新增数据通常使用 ___。", keywords: ["GET", "POST"], explanation: "GET 常用于查询，POST 常用于新增或提交复杂数据，真实项目仍以接口文档为准。" },
+  { id: "sd-04", kind: "single", round: "first", category: "软件测试基础", question: "需求评审时测试人员最应该输出什么？", options: ["需求疑问、测试范围、风险点和验收标准", "个人审美意见", "上线庆祝方案"], answer: 0, explanation: "需求评审的核心是把需求说清楚，把风险提前暴露出来。" },
+  { id: "sd-05", kind: "single", round: "first", category: "软件测试基础", question: "等价类划分最适合解决什么问题？", options: ["从大量输入中抽取代表性有效/无效数据", "替代所有测试", "只测 UI"], answer: 0, explanation: "等价类用于减少重复输入，边界值用于补关键边界。" },
+  { id: "sd-06", kind: "fill", round: "first", category: "软件测试基础", question: "缺陷报告至少要包含标题、复现步骤、实际结果、预期结果和 ___。", keywords: ["环境", "截图", "证据", "日志"], explanation: "环境、截图、日志、接口请求响应、数据库前后变化都能提高定位效率。" },
+  { id: "tool-01", kind: "single", round: "first", category: "测试软件平台基础知识", question: "Postman 更适合用来做什么？", options: ["接口调试和参数验证", "制作海报", "压缩图片"], answer: 0, explanation: "Postman 常用于接口请求构造、断言、环境变量和集合执行。" },
+  { id: "tool-02", kind: "single", round: "first", category: "测试软件平台基础知识", question: "JMeter 在线程组里主要配置什么？", options: ["并发用户数、循环次数、启动时间", "网页字体", "图片尺寸"], answer: 0, explanation: "线程组决定压测并发模型，是性能和接口批量执行的重要配置。" },
+  { id: "tool-03", kind: "fill", round: "first", category: "测试软件平台基础知识", question: "Fiddler 常用于对 APP/PDA 请求进行 ___ 分析。", keywords: ["抓包", "请求", "响应"], explanation: "抓包能看到客户端与服务端交互数据，适合定位移动端和接口问题。" },
+  { id: "flow-01", kind: "single", round: "first", category: "日常测试工作流程", question: "拿到新需求后，比较稳的工作顺序是？", options: ["需求评审→范围拆分→计划→用例→执行→缺陷→回归→上线验收", "先上线再测试", "只看页面"], answer: 0, explanation: "完整流程能避免漏测、乱测和上线风险失控。" },
+  { id: "flow-02", kind: "fill", round: "first", category: "日常测试工作流程", question: "冒烟测试通过后，才适合进入大范围 ___ 测试。", keywords: ["系统", "功能", "详细"], explanation: "冒烟测试用于确认版本是否具备继续测试条件。" },
+  { id: "flow-03", kind: "single", round: "first", category: "日常测试工作流程", question: "回归测试范围主要由什么决定？", options: ["代码改动影响面、核心流程和历史缺陷", "随机心情", "页面截图数量"], answer: 0, explanation: "回归要围绕变更风险和核心业务，不是机械全部重测。" },
+  { id: "db-01", kind: "single", round: "first", category: "数据库", question: "MySQL 中筛选订单状态通常会使用哪个关键字？", options: ["WHERE", "STYLE", "CLICK"], answer: 0, explanation: "WHERE 用于过滤条件，真实测试常结合订单号、状态、时间、用户等字段查询。" },
+  { id: "db-02", kind: "fill", round: "first", category: "数据库", question: "关联订单主表和明细表通常会用到 SQL 的 ___ 查询。", keywords: ["JOIN", "join"], explanation: "主表、明细表、日志表经常需要 JOIN 验证数据一致性。" },
+  { id: "linux-01", kind: "single", round: "first", category: "Linux", question: "查看日志中包含 error 的内容常用哪个命令组合？", options: ["grep error app.log", "open color", "copy image"], answer: 0, explanation: "grep 可按关键字过滤日志，tail -f 可实时观察日志。" },
+  { id: "linux-02", kind: "fill", round: "first", category: "Linux", question: "实时查看日志常用命令是 tail ___。", keywords: ["-f"], explanation: "tail -f app.log 是测试排查接口异常时的高频动作。" },
+  { id: "java-01", kind: "single", round: "first", category: "Java 基础", question: "接口报 NullPointerException，测试表达更专业的是？", options: ["对象为空导致调用异常，建议结合入参和日志定位", "电脑卡了", "浏览器坏了"], answer: 0, explanation: "理解常见异常可以提升缺陷沟通效率。" },
+  { id: "java-02", kind: "fill", round: "first", category: "Java 基础", question: "接口返回 JSON，本质上常见结构包含对象、数组和 ___。", keywords: ["字段", "键值", "key"], explanation: "测试接口时要关注字段类型、必填、枚举、精度和兼容性。" },
+  { id: "proj-01", kind: "single", round: "second", category: "测试项目知识", question: "项目深挖时，回答最不能只停留在什么层面？", options: ["只说点了哪些按钮", "说明业务规则和数据流", "说明风险和回归"], answer: 0, explanation: "二面常看项目真实参与深度，要讲业务链路、数据验证和缺陷闭环。" },
+  { id: "proj-02", kind: "fill", round: "second", category: "测试项目知识", question: "项目表达建议按“背景、职责、流程、工具、结果、___”组织。", keywords: ["风险", "复盘", "亮点"], explanation: "结构化表达更像真实做过项目，避免流水账。" },
+  { id: "proj-03", kind: "single", round: "second", category: "测试项目知识", question: "接口测试执行后，除响应成功外，还应验证什么？", options: ["数据库状态、业务结果、日志和上下游同步", "按钮颜色", "电脑型号"], answer: 0, explanation: "接口测试要形成前端、接口、数据库、日志、外部系统的证据链。" },
+  { id: "third-01", kind: "single", round: "third", category: "综合匹配", question: "三面被问到职业规划，最稳的回答方向是？", options: ["结合岗位能力、业务理解、自动化/质量提升方向", "说完全没想过", "只谈薪资"], answer: 0, explanation: "三面更看稳定性、成长方向、团队匹配和表达真实性。" },
+  { id: "third-02", kind: "fill", round: "third", category: "综合匹配", question: "面试反问可以围绕团队流程、系统复杂度、质量建设和 ___ 展开。", keywords: ["岗位重点", "自动化", "上线节奏"], explanation: "好的反问体现你在判断岗位匹配，而不是随便问。" },
+  { id: "third-03", kind: "single", round: "third", category: "综合匹配", question: "如果线上出现高风险缺陷，测试人员首先要做什么？", options: ["确认影响范围、保留证据、协同止损并推动修复回归", "责怪别人", "退出群聊"], answer: 0, explanation: "线上问题处理要先止损、定范围、保留证据、修复验证、复盘预防。" },
+  { id: "multi-01", kind: "multi", round: "first", category: "软件测试基础", question: "以下哪些属于常见黑盒用例设计方法？", options: ["等价类", "边界值", "场景法", "随便点一点"], answers: [0, 1, 2], explanation: "黑盒常用等价类、边界值、判定表、因果图、场景法、错误推测。" },
+  { id: "multi-02", kind: "multi", round: "first", category: "测试软件平台基础知识", question: "以下哪些工具常用于接口或性能测试？", options: ["Postman", "JMeter", "LoadRunner", "画图板"], answers: [0, 1, 2], explanation: "Postman 偏接口调试，JMeter/LoadRunner 常用于接口批量执行和性能压测。" },
+  { id: "multi-03", kind: "multi", round: "first", category: "日常测试工作流程", question: "提交缺陷时，哪些信息能明显提升定位效率？", options: ["复现步骤", "测试环境", "截图/录屏", "请求响应和日志"], answers: [0, 1, 2, 3], explanation: "缺陷证据越完整，开发复现和定位越快。" },
+  { id: "multi-04", kind: "multi", round: "second", category: "测试项目知识", question: "项目深挖时，哪些内容更能证明你真实参与过？", options: ["业务流程", "测试数据准备", "缺陷案例", "上线风险处理"], answers: [0, 1, 2, 3], explanation: "真实项目表达要有业务、工具、数据、缺陷、回归和结果。" },
+  { id: "multi-05", kind: "multi", round: "third", category: "综合匹配", question: "三面反问可以问哪些内容？", options: ["岗位主要负责系统", "团队测试流程", "自动化建设现状", "上线节奏和质量要求"], answers: [0, 1, 2, 3], explanation: "反问要围绕岗位匹配和后续工作开展。" }
+];
+
+const interviewPracticeExpansionQuestions = [
+  { id: "exp-basic-01", kind: "single", round: "first", category: "软件基础知识", question: "Web 系统出现 403，测试人员优先判断哪类问题？", options: ["权限或鉴权问题", "图片太大", "鼠标没电"], answer: 0, explanation: "403 通常与权限、Token、角色、接口鉴权有关，要结合账号和接口响应判断。" },
+  { id: "exp-basic-02", kind: "single", round: "first", category: "软件基础知识", question: "前端页面显示缓存旧数据，可能与哪些因素有关？", options: ["浏览器缓存、接口缓存、服务端缓存或数据未刷新", "屏幕贴膜", "键盘输入法"], answer: 0, explanation: "缓存问题要结合接口返回、页面刷新、缓存策略和后端数据变化判断。" },
+  { id: "exp-basic-03", kind: "fill", round: "first", category: "软件基础知识", question: "常见 HTTP 状态码中，404 表示资源 ___，500 表示服务端 ___。", keywords: ["不存在", "异常", "错误"], explanation: "状态码是接口和 Web 排查的基础，面试常结合场景追问。" },
+  { id: "exp-test-01", kind: "single", round: "first", category: "软件测试基础", question: "测试范围拆分时，最容易被新人漏掉的是哪一类？", options: ["异常流、权限、历史缺陷和关联模块", "正常主流程", "页面标题"], answer: 0, explanation: "新人常只测正向流程，真实项目要重点补异常流和影响面。" },
+  { id: "exp-test-02", kind: "fill", round: "first", category: "软件测试基础", question: "判定表适合处理多个条件组合导致不同 ___ 的需求。", keywords: ["结果", "动作", "规则"], explanation: "如优惠、审批、权限、计费等多条件规则适合用判定表。" },
+  { id: "exp-tool-01", kind: "single", round: "first", category: "测试软件平台基础知识", question: "Fiddler 抓不到 HTTPS 请求时，通常要检查什么？", options: ["证书安装、代理配置、手机网络代理", "页面配色", "Excel 格式"], answer: 0, explanation: "移动端抓包要配置代理和证书，否则看不到 HTTPS 明文请求。" },
+  { id: "exp-tool-02", kind: "single", round: "first", category: "测试软件平台基础知识", question: "JMeter 做接口关联时，常用什么把上一个接口结果传给下一个接口？", options: ["提取器和变量", "截图工具", "浏览器收藏夹"], answer: 0, explanation: "例如 JSON Extractor 提取 token、orderId，再传给后续请求。" },
+  { id: "exp-sql-01", kind: "single", round: "first", category: "数据库", question: "核对报表统计金额时，最应该关注什么？", options: ["统计口径、筛选条件、小数精度和明细汇总", "表格颜色", "按钮大小"], answer: 0, explanation: "财务、订单、库存报表都要核对明细与汇总口径。" },
+  { id: "exp-linux-01", kind: "fill", round: "first", category: "Linux", question: "排查日志时按关键字过滤通常使用 ___ 命令。", keywords: ["grep"], explanation: "grep 常配合 tail、cat、less 使用。" },
+  { id: "exp-java-01", kind: "single", round: "first", category: "Java 基础", question: "接口超时但数据库有慢 SQL，测试沟通时应强调什么？", options: ["业务请求与慢查询的关联证据", "页面不够好看", "电脑风扇声音"], answer: 0, explanation: "要用请求参数、耗时、日志、SQL 证据辅助定位。" },
+  { id: "exp-wms-01", kind: "single", round: "second", category: "WMS 项目场景", question: "WMS 盘点差异调整后，最需要验证什么？", options: ["账面库存、库位库存、批次库存和盘点记录一致", "登录页背景", "浏览器标题"], answer: 0, explanation: "仓储系统核心是库存一致，盘点会影响多张库存相关表。" },
+  { id: "exp-wms-02", kind: "fill", round: "second", category: "WMS 项目场景", question: "出库链路常见状态包括待拣货、已拣货、已复核、已发货和 ___。", keywords: ["取消", "异常", "失败"], explanation: "状态流转题要结合主流程和异常流表达。" },
+  { id: "exp-mes-01", kind: "single", round: "second", category: "MES 项目场景", question: "MES 报工数量超过工单数量，测试重点是什么？", options: ["是否拦截、提示、记录异常并避免错误入库", "字体大小", "头像是否显示"], answer: 0, explanation: "生产系统要防止数量、工序、物料消耗错误。" },
+  { id: "exp-ecom-01", kind: "single", round: "second", category: "跨境电商项目场景", question: "Shopee SG 商品同步时，币种最常见会涉及什么？", options: ["SGD 展示、USD 或平台规则结算、汇率和精度", "只用人民币", "不需要价格"], answer: 0, explanation: "跨境要关注展示币、结算币、汇率来源、舍入和平台字段差异。" },
+  { id: "exp-ecom-02", kind: "fill", round: "second", category: "跨境电商项目场景", question: "跨境商品同步失败时，要检查平台映射、字段校验、同步日志和 ___ 机制。", keywords: ["重试", "补偿"], explanation: "同步失败要看是否可重试、是否产生脏数据、是否通知运营处理。" },
+  { id: "exp-finance-01", kind: "single", round: "second", category: "财务项目场景", question: "财务系统审批流测试，最需要覆盖哪些角色？", options: ["申请人、审批人、财务、管理员和无权限用户", "只有管理员", "游客"], answer: 0, explanation: "审批流必须覆盖角色、权限、状态、金额和审计日志。" },
+  { id: "exp-forum-01", kind: "single", round: "second", category: "论坛 APP 项目场景", question: "APP 弱网测试时，最适合观察什么？", options: ["请求重试、加载提示、重复提交、数据一致性", "手机壳颜色", "屏幕亮度"], answer: 0, explanation: "移动端弱网容易导致重复提交、状态不同步和体验问题。" },
+  { id: "exp-bank-01", kind: "single", round: "second", category: "银行项目场景", question: "银行转账类场景测试最重要的风险是什么？", options: ["金额、账户、幂等、风控、对账和审计日志", "按钮圆角", "首页图片"], answer: 0, explanation: "金融类系统高风险，必须关注资金安全、风控和可追溯。" },
+  { id: "exp-game-01", kind: "single", round: "second", category: "游戏项目场景", question: "游戏充值到账测试，除支付成功外还要验证什么？", options: ["道具到账、订单状态、重复回调、补单和日志", "角色发型", "背景音乐"], answer: 0, explanation: "游戏测试同样重视支付、资产、账号、弱网、兼容和反作弊。" },
+  { id: "exp-third-01", kind: "single", round: "third", category: "综合匹配", question: "被追问项目里最大的困难时，回答结构最好是？", options: ["背景困难 + 我的动作 + 协作对象 + 结果复盘", "说没有困难", "说都是别人问题"], answer: 0, explanation: "三面更看解决问题和复盘能力，避免甩锅。" },
+  { id: "exp-third-02", kind: "fill", round: "third", category: "综合匹配", question: "谈离职原因建议保持真实、克制，并回到岗位匹配和 ___。", keywords: ["成长", "发展", "稳定"], explanation: "离职原因不要抱怨前公司，要表达正向选择。" },
+  { id: "exp-multi-01", kind: "multi", round: "first", category: "软件测试基础", question: "测试计划里通常应包含哪些内容？", options: ["测试范围", "人员和时间安排", "环境和数据准备", "风险和交付物"], answers: [0, 1, 2, 3], explanation: "测试计划是执行前的作战图，不是形式文档。" },
+  { id: "exp-multi-02", kind: "multi", round: "first", category: "接口测试", question: "接口测试用例一般覆盖哪些维度？", options: ["必填和类型", "边界和枚举", "权限和幂等", "数据库与日志"], answers: [0, 1, 2, 3], explanation: "接口测试要覆盖参数、业务、权限、异常和数据一致性。" },
+  { id: "exp-multi-03", kind: "multi", round: "second", category: "项目深挖", question: "讲 WMS/MES 项目时，哪些点能体现业务理解？", options: ["状态流转", "上下游接口", "异常流", "数据一致性"], answers: [0, 1, 2, 3], explanation: "业务系统项目表达一定要讲链路和数据。" },
+  { id: "exp-multi-04", kind: "multi", round: "third", category: "综合匹配", question: "上线前质量评估应关注哪些内容？", options: ["严重缺陷是否关闭", "核心流程回归结果", "遗留风险", "回滚方案"], answers: [0, 1, 2, 3], explanation: "上线验收不是只看测试通过率，还要判断风险是否可接受。" }
+];
+
+const practiceRoundNames = {
+  all: "完整模拟",
+  first: "一面基础",
+  second: "二面项目",
+  third: "三面综合"
+};
+
+function getPracticeMistakes() {
+  try {
+    return JSON.parse(localStorage.getItem(PRACTICE_MISTAKE_KEY) || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function savePracticeMistake(category, amount = 1) {
+  const mistakes = getPracticeMistakes();
+  mistakes[category] = (mistakes[category] || 0) + amount;
+  localStorage.setItem(PRACTICE_MISTAKE_KEY, JSON.stringify(mistakes));
+}
+
+function shuffleItems(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function buildSystemPracticeQuestions(system, index) {
+  const name = system.name || `训练系统${index + 1}`;
+  const slug = system.slug || `system-${index + 1}`;
+  const modules = system.modules?.length ? system.modules.join("、") : "主流程、接口、权限、数据、回归";
+  const firstTask = system.tasks?.[0] || { title: "需求评审", description: "确认规则、流程和验收标准" };
+  const secondTask = system.tasks?.[1] || { title: "测试执行", description: "覆盖主流程和异常流" };
+  const risk = system.knowledge?.risks?.[0] || "业务数据不一致、状态流转异常或接口同步失败";
+  const commonCase = system.knowledge?.commonCases?.[0] || `${name} 要结合真实业务流程拆测试范围。`;
+
+  return [
+    { id: `${slug}-single-01`, kind: "single", round: "second", category: `${name} 项目知识`, question: `${name} 做需求评审时，最应该优先确认什么？`, options: [`${modules} 的业务规则、角色权限、状态流转和验收标准`, "页面配色是否可爱", "只确认开发什么时候提测"], answer: 0, explanation: `结合 ${firstTask.title}：${firstTask.description}` },
+    { id: `${slug}-single-02`, kind: "single", round: "second", category: `${name} 项目知识`, question: `${name} 执行主流程后，除页面提示成功外还要看什么？`, options: ["接口返回、数据库落库、日志、状态流转和上下游同步", "只看按钮", "只看标题"], answer: 0, explanation: "真实项目验证要形成证据链。" },
+    { id: `${slug}-single-03`, kind: "single", round: "second", category: `${name} 项目知识`, question: `${name} 缺陷回归时，最应该关注什么？`, options: ["原问题是否修复以及关联模块是否产生新问题", "只把状态改关闭", "只问开发好了没"], answer: 0, explanation: "回归要覆盖修复点和影响面。" },
+    { id: `${slug}-single-04`, kind: "single", round: "second", category: `${name} 行业常识`, question: `结合 ${name}，以下哪种表达更像真实做过项目？`, options: [commonCase, "我只点页面", "我没看过需求"], answer: 0, explanation: "行业常识能让项目表达更具体、更可信。" },
+    { id: `${slug}-fill-01`, kind: "fill", round: "second", category: `${name} 项目知识`, question: `${name} 重点模块可概括为：${modules}，其中测试要特别关注 ___。`, keywords: [risk, "数据", "状态", "接口", "回归"], explanation: `该系统高频风险：${risk}` },
+    { id: `${slug}-fill-02`, kind: "fill", round: "second", category: `${name} 项目知识`, question: `${name} 面试表达建议把“需求、用例、执行、缺陷、___、上线风险”串起来。`, keywords: ["回归", "报告", "复盘"], explanation: "项目表达要闭环，不能只停在执行。" },
+    { id: `${slug}-multi-01`, kind: "multi", round: "second", category: `${name} 项目知识`, question: `${name} 做测试范围拆分时，应覆盖哪些维度？`, options: ["主流程", "异常流", "权限和数据", "接口与回归"], answers: [0, 1, 2, 3], explanation: `范围拆分要围绕 ${modules} 和核心风险。` },
+    { id: `${slug}-multi-02`, kind: "multi", round: "second", category: `${name} 项目知识`, question: `${name} 提交关键缺陷时，哪些证据更有价值？`, options: ["复现步骤", "测试数据", "接口请求响应", "数据库前后变化"], answers: [0, 1, 2, 3], explanation: "关键缺陷要补齐证据链，方便定位和回归。" },
+    { id: `${slug}-multi-03`, kind: "multi", round: "third", category: `${name} 综合面`, question: `三面聊到 ${name}，哪些回答角度比较加分？`, options: ["业务价值", "质量风险", "团队协作", "上线验收和复盘"], answers: [0, 1, 2, 3], explanation: "三面更关注你是否能从交付和协作角度看问题。" }
+  ];
+}
+
+function normalizePracticeQuestion(question, fallbackIndex) {
+  const kind = question.kind || "single";
+  return {
+    ...question,
+    id: question.id || `practice-${fallbackIndex}`,
+    kind,
+    round: question.round || getInterviewQuestionRound(question),
+    category: question.category || "综合题库"
+  };
+}
+
+function getInterviewPracticePool(training = currentTrainingData, round = "all", type = "single") {
+  const singleFromQuiz = getInterviewQuestionBank(training, "all").map((question, index) => ({
+    ...question,
+    id: `quiz-${index}`,
+    kind: "single"
+  }));
+  const systemQuestions = (training?.systems || []).flatMap(buildSystemPracticeQuestions);
+  const rawPool = [...interviewPracticeGeneralQuestions, ...interviewPracticeExpansionQuestions, ...singleFromQuiz, ...systemQuestions]
+    .map(normalizePracticeQuestion);
+  const kindPool = type === "multi"
+    ? rawPool.filter((question) => question.kind === "multi")
+    : rawPool.filter((question) => question.kind !== "multi");
+  const roundPool = round === "all" ? kindPool : kindPool.filter((question) => question.round === round);
+  return roundPool.length ? roundPool : kindPool;
+}
+
+function buildWeightedPracticeSet(pool, targetCount) {
+  const mistakes = getPracticeMistakes();
+  const weighted = pool.flatMap((question) => {
+    const weight = Math.min(5, 1 + (mistakes[question.category] || 0));
+    return Array.from({ length: weight }, () => question);
+  });
+  const source = shuffleItems(weighted.length ? weighted : pool);
+  const selected = [];
+  let cursor = 0;
+  while (selected.length < targetCount && source.length) {
+    selected.push({ ...source[cursor % source.length], instanceId: `${source[cursor % source.length].id}-${selected.length}` });
+    cursor += 1;
+  }
+  return selected;
+}
+
+function isFillAnswerRight(value, question) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+  return (question.keywords || []).some((keyword) => normalized.includes(String(keyword).toLowerCase()));
+}
+
+function evaluatePracticeCard(card, question) {
+  if (question.kind === "fill") {
+    const value = card.querySelector("input[type='text']")?.value || "";
+    return isFillAnswerRight(value, question);
+  }
+  if (question.kind === "multi") {
+    const selected = Array.from(card.querySelectorAll("input:checked")).map((input) => Number(input.value)).sort((a, b) => a - b);
+    const rightAnswers = [...(question.answers || [])].sort((a, b) => a - b);
+    return selected.length === rightAnswers.length && selected.every((value, index) => value === rightAnswers[index]);
+  }
+  const checked = card.querySelector("input:checked");
+  return checked ? Number(checked.value) === question.answer : false;
+}
+
+function renderPracticeQuestion(question, index) {
+  const answerText = question.kind === "multi"
+    ? (question.answers || []).map((answer) => question.options?.[answer]).join("、")
+    : question.kind === "fill"
+      ? (question.keywords || []).join(" / ")
+      : question.options?.[question.answer];
+  const inputName = `practice-${question.instanceId}`;
+
+  return `
+    <article class="practice-question-card" data-practice-question="${index}" data-category="${escapeHtml(question.category)}">
+      <div class="practice-question-head">
+        <span>${escapeHtml(question.category)}</span>
+        <b>${String(index + 1).padStart(3, "0")}</b>
+      </div>
+      <h3>${escapeHtml(question.question)}</h3>
+      ${question.kind === "fill" ? `
+        <input class="practice-fill-input" type="text" placeholder="输入你的答案关键词" />
+      ` : `
+        <div class="practice-options">
+          ${(question.options || []).map((option, optionIndex) => `
+            <label>
+              <input type="${question.kind === "multi" ? "checkbox" : "radio"}" name="${escapeHtml(inputName)}" value="${optionIndex}" />
+              <span>${escapeHtml(option)}</span>
+            </label>
+          `).join("")}
+        </div>
+      `}
+      <div class="practice-question-actions">
+        <button type="button" data-mark-unknown>不会，加入下次重点</button>
+      </div>
+      <p class="practice-explanation" hidden>
+        <strong>参考答案：</strong>${escapeHtml(answerText || "见解析")}<br />
+        ${escapeHtml(question.explanation || "答题后建议结合项目例子复述一遍。")}
+      </p>
+    </article>
+  `;
+}
+
+function setupInterviewPracticePage(training = currentTrainingData) {
+  const page = document.querySelector("[data-interview-practice-page]");
+  if (!page) {
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const roundSelect = page.querySelector("[data-practice-round]");
+  const typeSelect = page.querySelector("[data-practice-type]");
+  const list = page.querySelector("[data-practice-list]");
+  const countBox = page.querySelector("[data-practice-count]");
+  const scoreBox = page.querySelector("[data-practice-score]");
+  const boostBox = page.querySelector("[data-practice-boost]");
+  const title = page.querySelector("[data-practice-title]");
+  const description = page.querySelector("[data-practice-description]");
+  const submitButton = page.querySelector("[data-practice-submit]");
+  const regenerateButton = page.querySelector("[data-practice-regenerate]");
+  const clearButton = page.querySelector("[data-practice-clear-mistakes]");
+  const wrongButton = page.querySelector("[data-practice-show-wrong]");
+
+  if (!roundSelect || !typeSelect || !list) {
+    return;
+  }
+
+  if (!page.dataset.practiceInitialized) {
+    roundSelect.value = params.get("round") || "all";
+    typeSelect.value = params.get("type") || "single";
+    page.dataset.practiceInitialized = "true";
+  }
+
+  const render = () => {
+    const round = roundSelect.value || "all";
+    const type = typeSelect.value || "single";
+    const targetCount = type === "multi" ? 50 : 100;
+    const pool = getInterviewPracticePool(currentTrainingData, round, type);
+    const questions = buildWeightedPracticeSet(pool, targetCount);
+    page.practiceQuestions = questions;
+    list.dataset.submitted = "false";
+    list.classList.remove("show-wrong-only");
+    list.innerHTML = questions.map(renderPracticeQuestion).join("");
+    if (title) {
+      title.innerHTML = `${practiceRoundNames[round] || "完整模拟"} <span class="highlight blue">${type === "multi" ? "多选刷题" : "基础练习"}</span>`;
+    }
+    if (description) {
+      description.textContent = type === "multi"
+        ? "本次 50 道多选题，重点训练范围拆分、工具组合、项目风险和综合判断。"
+        : "本次 100 道单选+填空题，覆盖软件基础、测试基础、工具平台、日常流程和项目知识。";
+    }
+    if (countBox) {
+      countBox.textContent = `${practiceRoundNames[round] || "完整模拟"} · ${type === "multi" ? "多选" : "单选+填空"} · 本次 ${questions.length} 题`;
+    }
+    if (scoreBox) {
+      scoreBox.textContent = "未提交";
+    }
+    const mistakes = getPracticeMistakes();
+    const boostCount = Object.values(mistakes).reduce((sum, value) => sum + Number(value || 0), 0);
+    if (boostBox) {
+      boostBox.textContent = boostCount ? `错题加权：已记录 ${boostCount} 次薄弱类型` : "错题加权：暂无记录";
+    }
+  };
+
+  if (page.dataset.practiceEvents !== "true") {
+    page.dataset.practiceEvents = "true";
+    roundSelect.addEventListener("change", render);
+    typeSelect.addEventListener("change", render);
+    regenerateButton?.addEventListener("click", render);
+    clearButton?.addEventListener("click", () => {
+      localStorage.removeItem(PRACTICE_MISTAKE_KEY);
+      render();
+    });
+    list.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-mark-unknown]");
+      if (!button) {
+        return;
+      }
+      const card = button.closest("[data-practice-question]");
+      const question = page.practiceQuestions?.[Number(card?.dataset.practiceQuestion)];
+      if (!card || !question) {
+        return;
+      }
+      card.dataset.unknown = "true";
+      card.classList.add("is-unknown");
+      savePracticeMistake(question.category, 1);
+      button.textContent = "已加入下次重点";
+      button.disabled = true;
+    });
+    submitButton?.addEventListener("click", () => {
+      const questions = page.practiceQuestions || [];
+      let rightCount = 0;
+      list.querySelectorAll("[data-practice-question]").forEach((card) => {
+        const question = questions[Number(card.dataset.practiceQuestion)];
+        const isRight = evaluatePracticeCard(card, question);
+        const isUnknown = card.dataset.unknown === "true";
+        card.classList.remove("is-right", "is-wrong");
+        card.classList.add(isRight && !isUnknown ? "is-right" : "is-wrong");
+        if (isRight && !isUnknown) {
+          rightCount += 1;
+        } else if (question) {
+          savePracticeMistake(question.category, isUnknown ? 2 : 1);
+        }
+        const explanation = card.querySelector(".practice-explanation");
+        if (explanation) {
+          explanation.hidden = false;
+        }
+      });
+      list.dataset.submitted = "true";
+      const score = questions.length ? Math.round((rightCount / questions.length) * 100) : 0;
+      const level = score >= 90 ? "优秀" : score >= 80 ? "通过" : score >= 60 ? "需复盘" : "建议重刷";
+      if (scoreBox) {
+        scoreBox.textContent = `${score} 分 · 答对 ${rightCount}/${questions.length} · ${level}`;
+      }
+      const mistakes = getPracticeMistakes();
+      const boostCount = Object.values(mistakes).reduce((sum, value) => sum + Number(value || 0), 0);
+      if (boostBox) {
+        boostBox.textContent = `错题加权：已记录 ${boostCount} 次薄弱类型，下次会提高占比`;
+      }
+    });
+    wrongButton?.addEventListener("click", () => {
+      list.classList.toggle("show-wrong-only");
+      wrongButton.textContent = list.classList.contains("show-wrong-only") ? "显示全部题目" : "只看错题/不会题";
+    });
+  }
+
+  render();
+}
+
+function setupInterviewTraining(training = currentTrainingData) {
+  renderRoundPracticeBoard(training);
+  setupInterviewQuiz();
+  setupInterviewScenarioExam(training);
+  renderInterviewExtendGrid(training);
+  setupInterviewPracticePage(training);
+}
+
 async function initArticles() {
   await loadArticleData();
 
@@ -1699,8 +2637,10 @@ async function initArticles() {
     );
   }
 
-  renderArticleDetail();
+renderArticleDetail();
 }
 
+setupInterviewTraining();
+setupInterviewListingPages();
 initManagedContent();
 initArticles();

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 高频问题提炼</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header"><nav class="pill-nav" aria-label="主导航"><a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a><div class="nav-links"><a class="nav-link" href="index.html">首页</a><a class="nav-link" href="about.html">关于我</a><a class="nav-link" href="projects.html">项目经验</a><a class="nav-link" href="toolbox.html">测试工具箱</a><a class="nav-link" href="training.html">测试训练</a><a class="nav-link active" href="interview.html">面试训练</a><a class="nav-link" href="articles.html">文章</a></div><a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></a></nav></header>
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">KEY POINTS</p>
+          <h1>高频问题 <span class="highlight blue">提炼</span></h1>
+          <p>把常见问题沉淀成回答公式、项目要点、风险规避和日常训练方式。</p>
+        </div>
+      </section>
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索提炼关键词，例如：公式 / 项目 / 风险" aria-label="搜索高频问题提炼" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="interview-summary">
+          <div><p class="eyebrow">KEY POINTS</p><h2>高频问题 <span class="highlight blue">提炼</span></h2></div>
+          <div class="summary-grid" data-interview-listing>
+            <article data-title="回答公式 背景 职责 怎么测 工具 风险 闭环"><h3>回答公式</h3><p>背景一句话 + 我负责什么 + 我怎么测 + 用了什么工具 + 发现什么风险 + 最后怎么闭环。</p></article>
+            <article data-title="项目要点 主流程 接口链路 复杂缺陷 数据校验 上线风险"><h3>项目要点</h3><p>每个项目至少准备 1 条主流程、1 条接口链路、1 个复杂缺陷、1 个数据校验点、1 个上线风险。</p></article>
+            <article data-title="风险规避 需求 数据 接口 环境 上线影响 质量风险"><h3>风险规避</h3><p>不要说“我只是执行测试”，要表达你能从需求、数据、接口、环境、上线影响去判断质量风险。</p></article>
+            <article data-title="训练方式 录音 复盘 项目 工具 动作 结果"><h3>训练方式</h3><p>每天抽 3 个问题录音复盘，检查是否讲清楚了项目、工具、动作和结果。</p></article>
+          </div>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+    <footer class="site-footer compact"><nav class="footer-tabs" aria-label="页脚导航"><a href="index.html">首页</a><a href="about.html">关于我</a><a href="projects.html">项目经验</a><a href="toolbox.html">测试工具箱</a><a href="training.html">测试训练</a><a class="active" href="interview.html">面试训练</a><a href="articles.html">文章</a></nav><div class="footer-info" data-footer-info></div><p>CHILALA · 高频问题提炼</p></footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

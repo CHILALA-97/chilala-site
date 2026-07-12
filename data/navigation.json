@@ -60,6 +60,18 @@
     {
       "label": "面试训练",
       "href": "interview.html",
+      "matches": [
+        "interview-practice.html",
+        "interview-simulator.html",
+        "interview-quiz.html",
+        "interview-machine.html",
+        "interview-intro.html",
+        "interview-qa.html",
+        "interview-reverse.html",
+        "interview-baguwen.html",
+        "interview-keypoints.html",
+        "interview-extend.html"
+      ],
       "requirePassword": false,
       "password": "",
       "visible": true

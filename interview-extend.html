@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 后续拓展内容池</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">EXTEND LIBRARY</p>
+          <h1>后续拓展 <span class="highlight coral">内容池</span></h1>
+          <p>按项目、岗位、工具、真实面试反馈持续补题。新增训练系统后，这里会跟着生成对应面试拓展方向。</p>
+        </div>
+      </section>
+
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索内容池关键词，例如：WMS / 工具 / 岗位 / 反馈" aria-label="搜索后续拓展内容池" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="extend-board">
+          <div>
+            <p class="eyebrow">POOL MAP</p>
+            <h2>拓展方向 <span class="highlight yellow">持续更新</span></h2>
+            <p>把每次练习、真实面试和项目复盘里暴露的问题，统一沉淀成题目、答案、项目例子和避坑点。</p>
+          </div>
+          <div class="extend-grid" data-interview-extend-grid data-interview-listing>
+            <article data-title="按项目拓展 WMS MES 跨境 财务 论坛 APP 银行 游戏 项目专项问答">
+              <h3>按项目拓展</h3>
+              <p>新增 WMS、MES、跨境、财务、论坛 APP、银行、游戏等项目专项问答。</p>
+            </article>
+            <article data-title="按岗位拓展 初级测试 功能测试 接口测试 自动化测试 性能测试 测试组长">
+              <h3>按岗位拓展</h3>
+              <p>区分初级测试、功能测试、接口测试、自动化测试、性能测试、测试组长。</p>
+            </article>
+            <article data-title="按工具拓展 Postman JMeter Fiddler MySQL Linux Git Java 基础题">
+              <h3>按工具拓展</h3>
+              <p>继续补 Postman、JMeter、Fiddler、MySQL、Linux、Git、Java 基础题。</p>
+            </article>
+            <article data-title="按面试反馈拓展 题目 答案 项目例子 避坑点">
+              <h3>按面试反馈拓展</h3>
+              <p>每次真实面试后，把被问到的问题沉淀成“题目 + 答案 + 项目例子 + 避坑点”。</p>
+            </article>
+          </div>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 后续拓展内容池</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 自我介绍模拟</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">SELF INTRO</p>
+          <h1>自我介绍 <span class="highlight blue">模拟</span></h1>
+          <p>控制在 60 到 90 秒，按“年限 + 项目 + 技术 + 交付结果 + 求职方向”讲。</p>
+        </div>
+      </section>
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索自我介绍关键词，例如：WMS / JMeter / 交付" aria-label="搜索自我介绍内容" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="interview-split" data-interview-listing>
+          <div class="interview-sticky-note" data-title="自我介绍 模板 年限 项目 技术 交付结果 求职方向">
+            <p class="eyebrow">SELF INTRO</p>
+            <h2>自我介绍 <span class="highlight blue">模板</span></h2>
+            <p>先背结构，再替换成每一次面试最匹配的项目重点。</p>
+          </div>
+          <article class="intro-script-card" data-title="练习版本 江佩娜 CHILALA 软件测试 WMS MES 跨境 财务 论坛 APP MySQL JMeter Postman Fiddler">
+            <h3>可直接练习版本</h3>
+            <p>您好，我是江佩娜，也可以叫我 CHILALA，有 5 年软件测试经验，主要做过 WMS 仓储供应链、MES 打版生产、跨境电商商品服务、财务管理系统和论坛 APP 项目。</p>
+            <p>我比较熟悉功能测试、接口测试、回归测试、兼容性测试、性能测试和 JMeter 接口自动化。日常会从需求评审开始拆测试范围，用 XMind 或 Excel 设计测试点和用例，通过 MySQL、Navicat、Fiddler、Postman、JMeter 等工具做数据校验和接口验证。</p>
+            <p>我比较擅长把复杂业务拆成主流程、异常流和边界条件，也会持续跟进缺陷修复、回归验证和测试报告输出。希望下一份工作可以继续在业务系统测试、接口自动化和质量闭环方向深入发展。</p>
+          </article>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 自我介绍模拟</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

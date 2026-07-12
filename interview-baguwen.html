@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 测试面试八股文</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links"><a class="nav-link" href="index.html">首页</a><a class="nav-link" href="about.html">关于我</a><a class="nav-link" href="projects.html">项目经验</a><a class="nav-link" href="toolbox.html">测试工具箱</a><a class="nav-link" href="training.html">测试训练</a><a class="nav-link active" href="interview.html">面试训练</a><a class="nav-link" href="articles.html">文章</a></div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></a>
+      </nav>
+    </header>
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">QA BASICS</p>
+          <h1>测试面试 <span class="highlight yellow">八股文</span></h1>
+          <p>这些是面试高频“必会题”。先自己口述，再点开答案对照，不要只背句子，要背结构。</p>
+        </div>
+      </section>
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索八股关键词，例如：SQL / Linux / 性能 / 上线" aria-label="搜索测试面试八股文" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="baguwen-list" data-interview-listing>
+          <details data-title="软件测试 完整流程 需求评审 测试计划 环境 用例 缺陷 回归 上线"><summary>软件测试的完整流程是什么？</summary><p>需求评审、测试范围拆分、测试计划、环境准备、用例设计、用例评审、测试执行、缺陷提交与跟踪、回归测试、上线验收、测试报告、线上问题复盘。回答时最好补一句：我会在需求阶段提前识别权限、数据、接口、异常流和上线风险。</p></details>
+          <details data-title="测试环境 版本包 配置 数据库 账号 权限 基础数据 接口地址 日志"><summary>测试环境准备要检查什么？</summary><p>版本包、配置文件、数据库脚本、测试账号、角色权限、基础数据、第三方接口地址、缓存和定时任务、日志权限、浏览器或设备范围。环境问题要先和开发、运维确认，避免把环境异常当成业务缺陷。</p></details>
+          <details data-title="等价类 边界值 场景法 金额 订单 库存 回滚"><summary>等价类、边界值、场景法怎么用？</summary><p>等价类用于减少重复输入组合，边界值用于覆盖临界数据，场景法用于覆盖真实业务路径。比如金额字段要测 0、最小值、最大值、超限、小数精度、负数、空值和非法字符；订单流程要测正常支付、取消、退款、重复回调和库存回滚。</p></details>
+          <details data-title="接口测试 URL Header Token 参数 权限 幂等 返回码 数据库 日志 上下游"><summary>接口测试重点关注哪些点？</summary><p>请求方法、URL、Header、Token、必填参数、参数类型、边界值、业务状态、权限、幂等、返回码、返回字段、数据库落库、日志、上下游同步和异常提示。做项目表达时要结合 Postman、JMeter、Fiddler、MySQL 去说。</p></details>
+          <details data-title="SQL MySQL 测试数据 落库 状态流转 缺陷 count join update"><summary>SQL 在测试中怎么用？</summary><p>常用于准备测试数据、验证落库、核对状态流转、排查缺陷、统计异常数据。常见能力包括 select、where、order by、group by、count、join、update 前备份数据。面试里不要只说会查库，要说能验证业务数据一致性。</p></details>
+          <details data-title="Linux tail grep ps netstat lsof cat less scp chmod 日志 500"><summary>Linux 常用命令怎么讲？</summary><p>查看日志：tail -f、grep；查看进程：ps；查看端口：netstat 或 lsof；查看文件：cat、less；传输文件：scp；权限：chmod；目录：cd、ls、pwd。结合场景讲：接口报 500 时，我会看请求参数、服务日志、异常栈和数据库状态。</p></details>
+          <details data-title="Java 基础 异常 日志 对象 集合 HTTP JSON 自动化"><summary>Java 基础对测试有什么帮助？</summary><p>不要求像开发一样深入，但理解接口、对象、异常、集合、日志、数据库连接、HTTP 请求、JSON 序列化，有助于读懂报错、定位接口问题和写自动化脚本。能看懂简单代码逻辑，会让你在缺陷沟通时更有底气。</p></details>
+          <details data-title="性能测试 响应时间 TPS QPS 并发 错误率 CPU 内存 IO 慢 SQL"><summary>性能测试常见指标有哪些？</summary><p>响应时间、吞吐量 TPS/QPS、并发用户数、错误率、CPU、内存、磁盘 IO、数据库慢 SQL、接口超时。回答时说明先做单接口压测，再做业务链路压测，最后结合监控和日志定位瓶颈。</p></details>
+          <details data-title="上线验收 主流程 缺陷 回归 配置 接口 权限 迁移 回滚 测试报告 遗留风险"><summary>上线前你会重点验收什么？</summary><p>核心主流程、严重缺陷清零、阻塞问题关闭、回归用例通过、配置和脚本确认、接口连通、权限验证、数据迁移或兼容检查、回滚方案、测试报告和遗留风险说明。上线不是点按钮，是质量风险确认。</p></details>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+    <footer class="site-footer compact"><nav class="footer-tabs" aria-label="页脚导航"><a href="index.html">首页</a><a href="about.html">关于我</a><a href="projects.html">项目经验</a><a href="toolbox.html">测试工具箱</a><a href="training.html">测试训练</a><a class="active" href="interview.html">面试训练</a><a href="articles.html">文章</a></nav><div class="footer-info" data-footer-info></div><p>CHILALA · 测试面试八股文</p></footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

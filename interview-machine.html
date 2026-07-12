@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 上机面试实操检验</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">MACHINE TEST</p>
+          <h1>上机面试 <span class="highlight coral">实操检验</span></h1>
+          <p>选择一个项目场景，按真实测试流程勾选你会做的动作。系统会给出自评得分和短板提醒。</p>
+        </div>
+      </section>
+
+      <section class="interview-section page-band" aria-labelledby="machine-title">
+        <div class="machine-exam-board">
+          <div class="machine-exam-head">
+            <div>
+              <p class="eyebrow">MACHINE TEST</p>
+              <h2 id="machine-title">上机面试 <span class="highlight coral">实操检验</span></h2>
+              <p>按需求评审、测试数据、主流程、异常流、接口验证、数据库校验、缺陷提交、回归报告做一次完整自检。</p>
+            </div>
+            <label class="scenario-picker">
+              <span>选择项目场景</span>
+              <select data-scenario-select>
+                <option value="wms">WMS 仓储供应链</option>
+                <option value="mes">MES 打版生产</option>
+                <option value="ecommerce">跨境电商商品服务</option>
+                <option value="finance">财务管理系统</option>
+                <option value="forum">论坛 APP</option>
+              </select>
+            </label>
+          </div>
+          <article class="scenario-case" data-scenario-case></article>
+          <div class="scenario-checklist" data-scenario-checklist></div>
+          <div class="quiz-actions">
+            <button class="button" type="button" data-scenario-score>计算上机分</button>
+            <button class="button secondary" type="button" data-scenario-reset>清空重练</button>
+            <a class="button secondary" href="interview-quiz.html">去刷题模式</a>
+            <a class="button secondary" href="interview.html">回到面试训练</a>
+          </div>
+          <div class="machine-score" data-scenario-result>请选择场景并完成自评。</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 上机面试实操检验</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

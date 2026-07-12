@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 面试官问答模拟</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">REAL Q&A</p>
+          <h1>面试官问答 <span class="highlight yellow">模拟</span></h1>
+          <p>回答不要只背概念，尽量用“我在某项目里怎么做”来落地。</p>
+        </div>
+      </section>
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索问答关键词，例如：WMS / 接口 / 缺陷" aria-label="搜索面试官问答" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="dialogue-board" data-interview-listing>
+          <article class="dialogue-card" data-title="一面 完整测试流程 需求评审 测试计划 用例 缺陷 回归 上线"><span class="round-badge">一面</span><h3>你平时完整测试流程是怎样的？</h3><p><strong>面试者：</strong>我一般从需求评审开始，先确认业务目标、角色权限、主流程、异常流和接口数据来源。之后拆测试范围，输出测试计划和用例，准备环境和测试数据，再执行功能、接口、兼容、回归测试。缺陷会按严重程度提交并跟踪，回归完成后输出测试报告和上线风险点。</p></article>
+          <article class="dialogue-card" data-title="一面 测试用例 等价类 边界值 场景法 WMS 入库"><span class="round-badge">一面</span><h3>你怎么设计测试用例？</h3><p><strong>面试者：</strong>我会先画业务流程，再按功能点拆等价类、边界值、场景法和错误推测。比如 WMS 入库单，我会覆盖正常入库、重复扫码、超收、少收、批次为空、库位不可用、接口同步失败、库存回滚等情况。</p></article>
+          <article class="dialogue-card" data-title="二面 WMS 仓储供应链 JMeter Fiddler PDA ERP TMS MES 数据一致性"><span class="round-badge">二面</span><h3>讲一个你做过的 WMS 项目。</h3><p><strong>面试者：</strong>我参与过 WMS 仓储供应链系统，覆盖入库、库存、出库、波次、盘点等模块。我负责需求分析、测试点设计、功能和接口测试，用 JMeter 验证发货订单、生成拣货单等接口，并用 Fiddler 抓 PDA 端请求，重点验证库存数量、单据状态和 ERP/TMS/MES 外部接口数据一致性。</p></article>
+          <article class="dialogue-card" data-title="二面 接口测试 必填 参数 权限 幂等 返回码 数据库 上下游同步"><span class="round-badge">二面</span><h3>接口测试你重点关注什么？</h3><p><strong>面试者：</strong>我会关注请求参数必填、类型、边界、权限、幂等、业务状态流转、返回码、错误提示、数据库落库和上下游同步。比如订单发货接口，我会验证重复提交是否重复扣库存，接口失败后单据状态是否回滚，以及外部系统是否产生脏数据。</p></article>
+          <article class="dialogue-card" data-title="二面 Bug 缺陷 开发不认可 证据 复现 需求 产品 质量"><span class="round-badge">二面</span><h3>遇到开发不认可 Bug 怎么处理？</h3><p><strong>面试者：</strong>我会先补齐证据，包括复现步骤、测试环境、账号数据、截图录屏、接口请求响应、数据库前后变化。如果仍有分歧，会回到需求或业务规则确认预期结果，必要时拉产品一起判断，目标不是争对错，而是确认这个问题是否影响用户和上线质量。</p></article>
+          <article class="dialogue-card" data-title="三面 职业规划 接口自动化 性能测试 质量体系 回归清单 缺陷分析"><span class="round-badge">三面</span><h3>你未来想往哪个方向发展？</h3><p><strong>面试者：</strong>我希望继续深耕业务系统测试，同时增强接口自动化、性能测试和质量体系建设能力。短期希望把项目交付做稳，中期希望能沉淀公共测试资产，比如接口用例、回归清单、缺陷分析和自动化脚本，提高团队测试效率。</p></article>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+    <footer class="site-footer compact"><nav class="footer-tabs" aria-label="页脚导航"><a href="index.html">首页</a><a href="about.html">关于我</a><a href="projects.html">项目经验</a><a href="toolbox.html">测试工具箱</a><a href="training.html">测试训练</a><a class="active" href="interview.html">面试训练</a><a href="articles.html">文章</a></nav><div class="footer-info" data-footer-info></div><p>CHILALA · 面试官问答模拟</p></footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

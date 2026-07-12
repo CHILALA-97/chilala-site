@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 面试者反问清单</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a><a class="nav-link" href="about.html">关于我</a><a class="nav-link" href="projects.html">项目经验</a><a class="nav-link" href="toolbox.html">测试工具箱</a><a class="nav-link" href="training.html">测试训练</a><a class="nav-link active" href="interview.html">面试训练</a><a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></a>
+      </nav>
+    </header>
+    <main>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">ASK BACK</p>
+          <h1>面试者反问 <span class="highlight coral">清单</span></h1>
+          <p>反问不是随便问，而是判断岗位匹配、团队流程和后续工作重点。</p>
+        </div>
+      </section>
+      <section class="interview-section page-band" data-interview-listing-section>
+        <div class="article-back-action interview-list-actions">
+          <button class="button secondary back-button" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+          <a class="button secondary" href="interview.html">更多内容</a>
+        </div>
+        <label class="article-search interview-search">
+          <input type="search" data-interview-search placeholder="搜索反问关键词，例如：团队流程 / 自动化 / 上下游" aria-label="搜索面试者反问清单" />
+        </label>
+        <p class="empty-search" data-interview-empty hidden>没有找到对应内容</p>
+        <div class="reverse-question-grid" data-interview-listing>
+          <article data-title="团队流程 需求阶段 用例评审 缺陷评审 上线验收"><h3>问团队流程</h3><p>目前测试从需求阶段介入吗？用例评审、缺陷评审、上线验收分别由谁参与？</p></article>
+          <article data-title="岗位重点 功能测试 接口测试 自动化 性能 业务交付"><h3>问岗位重点</h3><p>这个岗位更侧重功能测试、接口测试、自动化、性能，还是业务交付？前三个月最希望我解决什么问题？</p></article>
+          <article data-title="系统复杂度 上下游 ERP WMS MES 财务 第三方平台接口"><h3>问系统复杂度</h3><p>目前系统主要对接哪些上下游？是否有 ERP、WMS、MES、财务或第三方平台接口？</p></article>
+          <article data-title="质量建设 回归用例库 接口自动化 测试报告 线上问题复盘"><h3>问质量建设</h3><p>团队现在有没有稳定的回归用例库、接口自动化、测试报告模板和线上问题复盘机制？</p></article>
+        </div>
+        <p class="end-of-list" data-interview-end>已全部显示，暂无更多内容了</p>
+      </section>
+    </main>
+    <footer class="site-footer compact"><nav class="footer-tabs" aria-label="页脚导航"><a href="index.html">首页</a><a href="about.html">关于我</a><a href="projects.html">项目经验</a><a href="toolbox.html">测试工具箱</a><a href="training.html">测试训练</a><a class="active" href="interview.html">面试训练</a><a href="articles.html">文章</a></nav><div class="footer-info" data-footer-info></div><p>CHILALA · 面试者反问清单</p></footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILALA | 面试刷题练习</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="pill-nav" aria-label="主导航">
+        <a class="brand-mark" href="index.html" aria-label="CHILALA 首页">C</a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">首页</a>
+          <a class="nav-link" href="about.html">关于我</a>
+          <a class="nav-link" href="projects.html">项目经验</a>
+          <a class="nav-link" href="toolbox.html">测试工具箱</a>
+          <a class="nav-link" href="training.html">测试训练</a>
+          <a class="nav-link active" href="interview.html">面试训练</a>
+          <a class="nav-link" href="articles.html">文章</a>
+        </div>
+        <a class="mail-button" href="mailto:hello@chilala.site" aria-label="联系 CHILALA">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main data-interview-practice-page>
+      <section class="interview-hero page-band">
+        <button class="button secondary back-button training-back" type="button" data-back-button data-back-fallback="interview.html">返回上一页</button>
+        <div class="section-title">
+          <p class="eyebrow">INTERVIEW EXAM</p>
+          <h1 data-practice-title>面试刷题 <span class="highlight yellow">练习场</span></h1>
+          <p data-practice-description>按一面、二面、三面随机抽题。单选+填空 100 题，多选 50 题，错题和不会题会提高下次练习占比。</p>
+        </div>
+      </section>
+
+      <section class="interview-section page-band">
+        <div class="practice-control-panel">
+          <label>面试轮次
+            <select data-practice-round>
+              <option value="all">完整模拟</option>
+              <option value="first">一面基础</option>
+              <option value="second">二面项目</option>
+              <option value="third">三面综合</option>
+            </select>
+          </label>
+          <label>题型模式
+            <select data-practice-type>
+              <option value="single">单选 + 填空（100题）</option>
+              <option value="multi">多选题（50题）</option>
+            </select>
+          </label>
+          <button class="button" type="button" data-practice-regenerate>重新抽题</button>
+          <button class="button secondary" type="button" data-practice-clear-mistakes>清空错题权重</button>
+        </div>
+
+        <div class="practice-score-strip">
+          <span data-practice-count>题库加载中</span>
+          <strong data-practice-score>未提交</strong>
+          <span data-practice-boost>错题加权：未读取</span>
+        </div>
+
+        <div class="interview-practice-list" data-practice-list></div>
+
+        <div class="quiz-actions practice-bottom-actions">
+          <button class="button" type="button" data-practice-submit>提交评分</button>
+          <button class="button secondary" type="button" data-practice-show-wrong>只看错题/不会题</button>
+          <a class="button secondary" href="interview.html">回到面试训练</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer compact">
+      <nav class="footer-tabs" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我</a>
+        <a href="projects.html">项目经验</a>
+        <a href="toolbox.html">测试工具箱</a>
+        <a href="training.html">测试训练</a>
+        <a class="active" href="interview.html">面试训练</a>
+        <a href="articles.html">文章</a>
+      </nav>
+      <div class="footer-info" data-footer-info></div>
+      <p>CHILALA · 面试刷题练习</p>
+    </footer>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>
