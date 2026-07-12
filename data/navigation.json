@@ -58,6 +58,13 @@
       "visible": true
     },
     {
+      "label": "面试训练",
+      "href": "interview.html",
+      "requirePassword": false,
+      "password": "",
+      "visible": true
+    },
+    {
       "label": "文章",
       "href": "articles.html",
       "matches": [
